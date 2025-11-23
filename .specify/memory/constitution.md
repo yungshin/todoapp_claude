@@ -1,50 +1,207 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+同步影響報告 (Sync Impact Report)
+==================================
+版本變更: 初始版本 → 1.0.0
+變更類型: MAJOR - 首次建立專案憲法
 
-## Core Principles
+新增原則:
+- 程式碼品質標準
+- 測試驅動開發
+- 使用者體驗一致性
+- 效能需求
+- MVP 優先原則
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+新增章節:
+- 核心原則 (5項原則)
+- 開發規範
+- 品質閘門
+- 治理規則
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+需要更新的模板:
+✅ plan-template.md - 憲法檢查章節已對齊
+✅ spec-template.md - 使用者情境與測試需求已對齊
+✅ tasks-template.md - 任務分類與測試優先已對齊
+✅ 所有指令檔案使用通用指引,無需特定代理名稱調整
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+後續待辦事項:
+- 無待辦項目,所有必要欄位皆已填寫
+-->
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+# TodoApp 專案憲法
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+## 核心原則
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### I. 程式碼品質標準 (NON-NEGOTIABLE)
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+**宣言**: 所有程式碼必須符合可讀性、可維護性與可測試性的高標準要求。
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**規則**:
+- 程式碼必須遵循明確的命名慣例,變數與函式名稱應清楚表達其用途
+- 每個函式應保持單一職責,避免過度複雜的邏輯
+- 重複的程式碼必須重構為可重用的函式或模組
+- 所有公開的 API 與重要函式必須有清楚的文件說明
+- 必須使用程式碼檢查工具(linter)確保程式碼風格一致性
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+**理由**: 高品質的程式碼能降低維護成本、減少錯誤,並提升團隊協作效率。程式碼品質是長期專案成功的基石。
 
-## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
+---
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+### II. 測試驅動開發 (TDD) (NON-NEGOTIABLE)
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**宣言**: 所有功能開發必須遵循測試優先的開發流程。
+
+**規則**:
+- 必須先撰寫測試,確認測試失敗(Red)
+- 撰寫最少量的程式碼使測試通過(Green)
+- 在測試通過後進行重構(Refactor)
+- 嚴格遵循 Red-Green-Refactor 循環
+- 單元測試覆蓋率目標: 核心業務邏輯達 80% 以上
+- 整合測試必須涵蓋關鍵使用者情境
+
+**測試分類**:
+- **單元測試**: 測試個別函式與模組的行為
+- **整合測試**: 測試模組間的互動與資料流
+- **合約測試**: 測試 API 端點符合規格
+
+**理由**: TDD 能提早發現問題、確保程式碼可測試性、提供即時回饋,並建立信心進行重構。測試即文件,能清楚展現系統行為。
+
+---
+
+### III. 使用者體驗一致性
+
+**宣言**: 所有使用者介面與互動必須保持一致的體驗標準。
+
+**規則**:
+- 錯誤訊息必須清楚、友善且提供可行的解決方案
+- 載入狀態必須有視覺回饋(如載入指示器)
+- 成功與失敗的操作結果必須有明確的使用者通知
+- 表單驗證錯誤必須即時顯示於相關欄位旁
+- 所有互動元件(按鈕、連結、輸入框)必須遵循統一的視覺與行為規範
+- 關鍵操作(如刪除)必須有確認機制
+- 介面回應時間應符合效能需求標準
+
+**理由**: 一致的使用者體驗能降低學習成本、減少使用者錯誤,並提升使用者滿意度與產品專業形象。
+
+---
+
+### IV. 效能需求
+
+**宣言**: 系統必須符合明確的效能指標,確保良好的使用者體驗。
+
+**效能目標**:
+- **回應時間**: API 端點 95 百分位數(p95)回應時間 < 200ms
+- **頁面載入**: 首次內容繪製(FCP) < 1.5 秒
+- **互動回應**: 使用者互動到視覺回饋 < 100ms
+- **資源使用**: 記憶體使用量在合理範圍內,避免記憶體洩漏
+- **並發處理**: 支援至少 100 個並發使用者而不顯著降低效能
+
+**監控與優化**:
+- 關鍵路徑必須進行效能測試
+- 資料庫查詢必須優化,避免 N+1 問題
+- 前端資源必須進行適當的壓縮與快取
+- 定期進行效能分析與瓶頸識別
+
+**理由**: 良好的效能直接影響使用者體驗與留存率。效能問題會導致使用者流失並增加基礎設施成本。
+
+---
+
+### V. MVP 優先原則
+
+**宣言**: 所有功能開發必須遵循最小可行產品(Minimum Viable Product)原則,優先實現核心價值。
+
+**規則**:
+- 每個功能規格必須明確標示使用者情境的優先級(P1, P2, P3...)
+- P1 優先級的使用者情境必須優先實現並可獨立測試
+- 避免過度設計,不為假設性的未來需求增加複雜度
+- 每個使用者情境應能獨立實現、測試與部署
+- 在增加新功能前,應先確保核心功能穩定且符合品質標準
+- 複雜性必須有明確理由,簡單方案優先
+
+**執行策略**:
+- 使用者情境按優先級排序(P1 → P2 → P3)
+- 每完成一個優先級,應進行獨立驗證與展示
+- 任何增加的抽象層或設計模式必須有具體的當前需求作為理由
+
+**理由**: MVP 原則能加速價值交付、降低風險、快速獲得使用者回饋,並避免浪費資源在非必要功能上。
+
+---
+
+## 開發規範
+
+### 分支策略
+- 主分支(`main`): 隨時可部署的穩定版本
+- 功能分支: 使用格式 `###-feature-name`,其中 `###` 為功能編號
+- 所有變更必須通過拉取請求(Pull Request)審查後方可合併
+
+### 程式碼審查要求
+- 所有 PR 必須經過至少一位團隊成員審查
+- 審查者必須驗證程式碼符合憲法原則
+- 必須檢查測試覆蓋率與測試品質
+- 確認效能影響在可接受範圍內
+
+### 提交規範
+- 提交訊息應清楚描述變更目的(why),而非僅描述變更內容(what)
+- 使用有意義的提交訊息格式: `類型: 簡短描述`
+  - 類型範例: `feat`, `fix`, `refactor`, `test`, `docs`, `perf`
+
+---
+
+## 品質閘門
+
+每個功能在進入下一階段前必須通過以下檢查點:
+
+### 規格階段 (Specification)
+- [ ] 使用者情境已按優先級(P1, P2, P3...)排序
+- [ ] 每個使用者情境可獨立測試
+- [ ] 功能需求明確且可測量
+- [ ] 成功標準已定義
+
+### 設計階段 (Planning)
+- [ ] 技術方案符合程式碼品質標準
+- [ ] 複雜度已評估且有正當理由
+- [ ] 效能目標已明確定義
+- [ ] 測試策略已規劃
+
+### 實作階段 (Implementation)
+- [ ] 所有測試已撰寫且最初為失敗狀態
+- [ ] 測試覆蓋率符合標準
+- [ ] 程式碼通過檢查工具檢查
+- [ ] 效能指標符合需求
+- [ ] 使用者體驗符合一致性標準
+
+### 完成階段 (Done)
+- [ ] 所有 P1 使用者情境已實現且可獨立驗證
+- [ ] 整合測試通過
+- [ ] 文件已更新
+- [ ] 程式碼審查已完成
+
+---
+
+## 治理規則
+
+### 憲法優先性
+本憲法優先於所有其他開發實踐與決策。任何與憲法相牴觸的做法必須經過正式修訂程序。
+
+### 修訂程序
+1. 提出修訂建議,包含理由與影響範圍分析
+2. 團隊討論與評估
+3. 獲得團隊共識後進行修訂
+4. 更新版本號並記錄變更歷史
+5. 同步更新所有相關模板與文件
+
+### 版本管理
+- **MAJOR**: 移除或重新定義原則,不向後相容的治理變更
+- **MINOR**: 新增原則或章節,顯著擴展指引內容
+- **PATCH**: 文字澄清、錯字修正、非語義性的改進
+
+### 合規性審查
+- 所有 PR 必須驗證是否符合憲法要求
+- 複雜度增加必須有書面理由說明
+- 定期審查專案是否持續符合憲法原則
+
+### 運行時指引
+開發過程中的具體實踐指引請參考 `.specify/templates/` 目錄下的模板檔案。
+
+---
+
+**版本**: 1.0.0 | **批准日期**: 2025-11-23 | **最後修訂**: 2025-11-23
