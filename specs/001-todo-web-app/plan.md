@@ -15,12 +15,11 @@
 **Primary Dependencies**:
 - Vue 3.4+ (前端框架,使用 Composition API)
 - Pinia 2.x (狀態管理)
-- Vue Router 4.x (路由管理,單頁應用程式需要)
 - VueUse 10.x (Vue 組合式函式工具庫,提供 localStorage、網路狀態等實用工具)
 - Tailwind CSS 3+ (Utility-First CSS 框架,提供現代化設計與高效開發體驗)
 
 **Storage**: 瀏覽器 localStorage (純前端,無後端資料庫)
-**Testing**: Vitest (單元測試) + Vue Test Utils (元件測試) + Playwright (E2E 測試,可選)
+**Testing**: Vitest (單元測試、元件測試、E2E 測試) + Vue Test Utils (Vue 元件測試工具)
 **Target Platform**: 現代瀏覽器 (Chrome, Firefox, Safari, Edge 最新版本)
 **Project Type**: 單頁式 Web 應用程式 (SPA)
 **Performance Goals**:
@@ -72,7 +71,7 @@
 
 - **FCP < 1.5s**: 使用 Vite 打包,程式碼分割,延遲載入非關鍵元件
 - **互動回應 < 100ms**: 使用 Vue 3 reactivity 系統確保即時更新
-- **大量資料處理**: 虛擬滾動 (如超過 100 個項目時使用 `vue-virtual-scroller`)
+- **大量資料處理**: Vue 3 高效 reactivity 系統原生支援大量項目渲染 (測試目標: 500-1000 個待辦事項)
 - **記憶體管理**: 正確清理事件監聽器與計時器,避免記憶體洩漏
 - **資源優化**: Vite 自動進行樹搖 (tree-shaking) 與程式碼壓縮
 
