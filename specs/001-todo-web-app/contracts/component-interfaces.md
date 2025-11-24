@@ -99,6 +99,12 @@ interface TodoInputState {
 
   /** 是否正在提交 */
   isSubmitting: boolean;
+
+  /** 當前字數 */
+  characterCount: number;
+
+  /** 是否已達字數上限 */
+  isMaxLength: boolean;
 }
 ```
 
@@ -124,17 +130,70 @@ interface TodoInputMethods {
 
 **驗證規則**:
 1. 不可為空白字串 (trim 後)
-2. 長度不可超過 500 字元
-3. XSS 防護由 Vue 自動處理 (文字插值自動跳脫)
+2. 長度不可超過 500 字元 (使用 HTML `maxlength="500"` 屬性阻止超長輸入)
+3. XSS 防護由 Vue 自動處理 (文字插值自動跳脫,不使用 `v-html`)
+
+**字數統計功能**:
+- **即時顯示**: 輸入框下方顯示 "當前字數/500 字元" (例如: "245/500 字元")
+- **達到上限**: 當 `characterCount === 500` 時,顯示提示文字 "已達字數上限"
+- **視覺回饋**: 超過 450 字元時文字顏色變為警告色 (橘色),達到 500 時變為紅色
+- **計算方式**: 使用 `inputText.length` 計算 (不 trim)
 
 **錯誤訊息**:
 - 空白: `「請輸入待辦事項內容」`
-- 超長: `「待辦事項文字不可超過 500 字元 (目前: {length} 字元)」`
+- 超長 (邊界情況,通常被 maxlength 阻止): `「待辦事項文字不可超過 500 字元」`
 
 **成功行為**:
 - 清空輸入框
+- 重置字數統計為 "0/500 字元"
 - 顯示 Toast: `「新增成功」`
 - 焦點保持在輸入框
+
+**範本補充** (使用 Tailwind CSS):
+```vue
+<template>
+  <div class="space-y-2">
+    <div class="flex gap-2">
+      <input
+        v-model="inputText"
+        @input="updateCharacterCount"
+        maxlength="500"
+        placeholder="輸入待辦事項..."
+        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
+        aria-label="新增待辦事項輸入框"
+      />
+      <button
+        @click="handleSubmit"
+        :disabled="!inputText.trim() || isSubmitting"
+        class="px-6 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      >
+        新增
+      </button>
+    </div>
+
+    <!-- 字數統計 -->
+    <div class="flex justify-between items-center text-sm">
+      <span
+        :class="{
+          'text-gray-500': characterCount < 450,
+          'text-orange-500': characterCount >= 450 && characterCount < 500,
+          'text-red-500': characterCount === 500
+        }"
+      >
+        {{ characterCount }}/500 字元
+      </span>
+      <span v-if="isMaxLength" class="text-red-500 font-medium">
+        已達字數上限
+      </span>
+    </div>
+
+    <!-- 錯誤訊息 -->
+    <span v-if="errorMessage" class="block text-sm text-red-600">
+      {{ errorMessage }}
+    </span>
+  </div>
+</template>
+```
 
 ---
 
@@ -163,6 +222,12 @@ interface TodoItemState {
 
   /** 驗證錯誤訊息 */
   errorMessage: string | null;
+
+  /** 編輯中的字數 */
+  editCharacterCount: number;
+
+  /** 編輯中是否已達字數上限 */
+  isEditMaxLength: boolean;
 }
 ```
 
@@ -255,13 +320,29 @@ interface TodoItemVisualState {
     </span>
 
     <!-- 編輯模式 -->
-    <input
-      v-else
-      v-model="editText"
-      @keydown.enter="saveEdit"
-      @keydown.escape="cancelEdit"
-      class="flex-1 px-3 py-1 border border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
-    />
+    <div v-else class="flex-1 space-y-1">
+      <input
+        v-model="editText"
+        @keydown.enter="saveEdit"
+        @keydown.escape="cancelEdit"
+        maxlength="500"
+        class="w-full px-3 py-1 border border-primary rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
+      />
+      <div class="text-xs">
+        <span
+          :class="{
+            'text-gray-500': editCharacterCount < 450,
+            'text-orange-500': editCharacterCount >= 450 && editCharacterCount < 500,
+            'text-red-500': editCharacterCount === 500
+          }"
+        >
+          {{ editCharacterCount }}/500 字元
+        </span>
+        <span v-if="isEditMaxLength" class="ml-2 text-red-500">
+          已達字數上限
+        </span>
+      </div>
+    </div>
 
     <!-- 操作按鈕 -->
     <div class="flex gap-2">

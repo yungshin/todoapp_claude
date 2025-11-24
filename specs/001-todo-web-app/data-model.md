@@ -18,20 +18,20 @@
 
 ```typescript
 interface TodoItem {
-  /** 唯一識別碼,使用 UUID v4 格式 */
+  /** 唯一識別碼,使用 crypto.randomUUID() 生成 UUID v4 格式 */
   id: string;
 
-  /** 待辦事項文字描述,最多 500 字元 */
+  /** 待辦事項文字描述,最少 1 字元,最多 500 字元 */
   text: string;
 
-  /** 完成狀態 */
+  /** 完成狀態,預設為 false (未完成) */
   completed: boolean;
 
-  /** 建立時間戳記,ISO 8601 格式 */
-  createdAt: string;
+  /** 建立時間戳記,Unix milliseconds (Date.now()),用於同組內排序 */
+  createdAt: number;
 
-  /** 最後更新時間戳記,ISO 8601 格式 */
-  updatedAt: string;
+  /** 最後更新時間戳記,Unix milliseconds,用於追蹤修改歷史與未來的同步衝突解決 */
+  updatedAt: number;
 }
 ```
 
@@ -39,20 +39,23 @@ interface TodoItem {
 
 | 欄位 | 型別 | 必填 | 說明 | 驗證規則 |
 |------|------|------|------|----------|
-| `id` | `string` | ✅ | UUID v4 格式的唯一識別碼 | 格式: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx` |
-| `text` | `string` | ✅ | 待辦事項的文字描述 | 長度: 1-500 字元,不可為空白字串 |
-| `completed` | `boolean` | ✅ | 是否已完成 | `true` (已完成) 或 `false` (未完成) |
-| `createdAt` | `string` | ✅ | 建立時間 | ISO 8601 格式,例: `2025-11-23T10:30:00.000Z` |
-| `updatedAt` | `string` | ✅ | 最後更新時間 | ISO 8601 格式,每次編輯或狀態變更時更新 |
+| `id` | `string` | ✅ | UUID v4 格式的唯一識別碼,使用 `crypto.randomUUID()` 生成 | 格式: `xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx` |
+| `text` | `string` | ✅ | 待辦事項的文字描述 | 長度: 1-500 字元,不可為空白字串,使用 HTML `maxlength="500"` 屬性防止超長輸入 |
+| `completed` | `boolean` | ✅ | 是否已完成 | `true` (已完成) 或 `false` (未完成),預設為 `false` |
+| `createdAt` | `number` | ✅ | 建立時間戳記,用於同組內排序 | Unix milliseconds (使用 `Date.now()`),例: `1700740200000` |
+| `updatedAt` | `number` | ✅ | 最後更新時間戳記,用於追蹤修改歷史與未來同步衝突解決 | Unix milliseconds,每次編輯或切換完成狀態時更新為當前時間,新增時設定為與 `createdAt` 相同 |
 
 **業務規則**:
 
-1. **唯一性**: `id` 必須在所有待辦事項中唯一
-2. **文字長度**: `text` 長度限制 1-500 字元
-3. **XSS 防護**: `text` 儲存原始文字,顯示時 Vue 自動跳脫 HTML
-4. **時間戳記**: `createdAt` 建立後不可變更,`updatedAt` 每次編輯時更新
-5. **狀態切換**: `completed` 可在 `true`/`false` 間自由切換
-6. **刪除**: 刪除為永久性操作,無軟刪除或垃圾桶功能 (MVP 階段)
+1. **唯一性**: `id` 必須在所有待辦事項中唯一,使用 `crypto.randomUUID()` 確保唯一性
+2. **文字長度**: `text` 長度限制 1-500 字元,輸入框使用 `maxlength="500"` 屬性防止超長輸入
+3. **字數統計**: 即時顯示字數統計 (格式: "當前字數/500 字元"),達到上限時顯示提示 "已達字數上限"
+4. **XSS 防護**: `text` 儲存原始文字,顯示時使用 Vue 的 `textContent` 或雙大括號語法自動跳脫 HTML (不使用 `v-html`)
+5. **時間戳記**:
+   - `createdAt` 建立後不可變更
+   - `updatedAt` 在新增時設定為與 `createdAt` 相同,每次編輯文字或切換完成狀態時更新為 `Date.now()`
+6. **狀態切換**: `completed` 可在 `true`/`false` 間自由切換,切換時更新 `updatedAt`
+7. **刪除**: 刪除為永久性操作,無軟刪除或垃圾桶功能 (MVP 階段)
 
 **範例資料**:
 
@@ -61,9 +64,19 @@ interface TodoItem {
   "id": "550e8400-e29b-41d4-a716-446655440000",
   "text": "完成專案規劃文件",
   "completed": false,
-  "createdAt": "2025-11-23T10:00:00.000Z",
-  "updatedAt": "2025-11-23T10:00:00.000Z"
+  "createdAt": 1700740200000,
+  "updatedAt": 1700740200000
 }
+```
+
+**時間戳記轉換**:
+```typescript
+// 產生時間戳記
+const timestamp = Date.now(); // 1700740200000
+
+// 顯示為人類可讀格式
+const date = new Date(timestamp);
+const formatted = date.toLocaleString('zh-TW'); // "2023/11/23 下午6:30:00"
 ```
 
 ## localStorage 儲存格式
@@ -98,15 +111,15 @@ interface StorageData {
       "id": "550e8400-e29b-41d4-a716-446655440000",
       "text": "完成專案規劃文件",
       "completed": false,
-      "createdAt": "2025-11-23T10:00:00.000Z",
-      "updatedAt": "2025-11-23T10:00:00.000Z"
+      "createdAt": 1700740200000,
+      "updatedAt": 1700740200000
     },
     {
       "id": "6ba7b810-9dad-11d1-80b4-00c04fd430c8",
       "text": "撰寫單元測試",
       "completed": true,
-      "createdAt": "2025-11-23T09:00:00.000Z",
-      "updatedAt": "2025-11-23T11:30:00.000Z"
+      "createdAt": 1700736600000,
+      "updatedAt": 1700749800000
     }
   ],
   "version": "1.0",
@@ -166,13 +179,13 @@ export const useTodosStore = defineStore('todos', () => {
   const activeTodos = computed(() =>
     todos.value
       .filter(t => !t.completed)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .sort((a, b) => b.createdAt - a.createdAt)
   );
 
   const completedTodos = computed(() =>
     todos.value
       .filter(t => t.completed)
-      .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+      .sort((a, b) => b.createdAt - a.createdAt)
   );
 
   const todoCount = computed(() => ({
@@ -218,20 +231,23 @@ export const useTodosStore = defineStore('todos', () => {
 **Actions 說明**:
 
 1. **addTodo(text)**: 新增待辦事項
-   - 生成 UUID
-   - 設定 `createdAt` 與 `updatedAt` 為當前時間
+   - 驗證 `text` 非空白且長度 ≤ 500 字元
+   - 使用 `crypto.randomUUID()` 生成 UUID
+   - 設定 `createdAt` 與 `updatedAt` 為 `Date.now()`
    - 預設 `completed = false`
    - 加入 `todos` 陣列
    - 儲存到 localStorage
+   - 回傳新建立的 TodoItem
 
 2. **updateTodo(id, text)**: 更新待辦事項文字
-   - 驗證 `text` 長度 (1-500 字元)
-   - 更新 `updatedAt` 為當前時間
+   - 驗證 `text` 非空白且長度 1-500 字元
+   - 更新 `text` 欄位
+   - 更新 `updatedAt` 為 `Date.now()`
    - 儲存到 localStorage
 
 3. **toggleTodo(id)**: 切換完成狀態
-   - 切換 `completed` 值
-   - 更新 `updatedAt`
+   - 切換 `completed` 值 (true ↔ false)
+   - 更新 `updatedAt` 為 `Date.now()`
    - 儲存到 localStorage
 
 4. **deleteTodo(id)**: 刪除待辦事項
@@ -499,14 +515,15 @@ describe('localStorage integration', () => {
 
   it('should load todos from localStorage on init', () => {
     // 預先設定 localStorage
+    const timestamp = Date.now();
     localStorage.setItem('todos-app-data', JSON.stringify({
       todos: [
         {
           id: '123',
           text: '預載資料',
           completed: false,
-          createdAt: '2025-11-23T10:00:00.000Z',
-          updatedAt: '2025-11-23T10:00:00.000Z'
+          createdAt: timestamp,
+          updatedAt: timestamp
         }
       ],
       version: '1.0'
@@ -517,6 +534,7 @@ describe('localStorage integration', () => {
 
     expect(store.todos).toHaveLength(1);
     expect(store.todos[0].text).toBe('預載資料');
+    expect(store.todos[0].createdAt).toBe(timestamp);
   });
 
   it('should handle localStorage quota exceeded error', () => {

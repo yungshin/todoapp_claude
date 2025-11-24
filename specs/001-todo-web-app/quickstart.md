@@ -234,11 +234,30 @@ export default [
 ```javascript
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
+  content: [
+    "./index.html",
+    "./src/**/*.{vue,js,ts,jsx,tsx}",
+  ],
   theme: {
+    screens: {
+      // 手機優先設計 (預設樣式)
+      'sm': '640px',   // Tailwind 預設,本專案較少使用
+      'md': '768px',   // 平板中斷點 (對應 spec.md 定義)
+      'lg': '1024px',  // 桌面中斷點 (對應 spec.md 定義)
+      'xl': '1280px',  // 大螢幕 (可選)
+    },
     extend: {
       colors: {
+        // 主要顏色
         primary: '#3b82f6',
+        // Toast 通知顏色
+        'toast-success': '#10b981',
+        'toast-error': '#ef4444',
+        'toast-warning': '#f59e0b',
+        'toast-info': '#3b82f6',
+        // 警告橫幅顏色
+        'warning-banner': '#fef3c7',
+        // 其他顏色別名
         success: '#10b981',
         danger: '#ef4444',
         warning: '#f59e0b',
@@ -247,6 +266,20 @@ export default {
   },
   plugins: [],
 };
+```
+
+**響應式設計中斷點說明**:
+- **手機**: < 768px (使用預設樣式,不需加前綴)
+- **平板**: ≥ 768px (使用 `md:` 前綴)
+- **桌面**: ≥ 1024px (使用 `lg:` 前綴)
+
+**使用範例**:
+```vue
+<!-- 手機: 垂直排列, 平板/桌面: 水平排列 -->
+<div class="flex flex-col md:flex-row gap-4">
+  <input class="flex-1" />
+  <button class="w-full md:w-auto">新增</button>
+</div>
 ```
 
 ### 7. 建立 Tailwind CSS 入口檔案 (`src/assets/styles/main.css`)
@@ -452,12 +485,13 @@ export const useTodosStore = defineStore('todos', () => {
   const todos = ref<TodoItem[]>([]);
 
   function addTodo(text: string): TodoItem {
+    const now = Date.now(); // Unix milliseconds
     const todo: TodoItem = {
       id: crypto.randomUUID(),
       text,
       completed: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
+      createdAt: now,
+      updatedAt: now
     };
 
     todos.value.push(todo);
