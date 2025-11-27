@@ -11,14 +11,14 @@
 
 ### 快速統計
 
-- **總任務數**: 73
+- **總任務數**: 76
 - **User Story 1 (P1)**: 20 個任務 (核心功能,必須優先完成)
 - **User Story 2 (P2)**: 8 個任務
 - **User Story 3 (P3)**: 8 個任務
 - **User Story 4 (P4)**: 11 個任務
 - **Setup**: 6 個任務
 - **Foundational**: 8 個任務
-- **Polish**: 12 個任務
+- **Polish**: 15 個任務 (包含 Playwright 設定與測試)
 
 ### MVP 範圍建議
 
@@ -264,8 +264,11 @@ Phase 7: Polish (T062-T073)
 - [ ] T069 [P] 實作 TodoInput 元件響應式設計 (輸入框與按鈕在手機上垂直排列、桌面上水平排列)
 - [ ] T070 [P] 實作 TodoList 與 TodoItem 元件響應式設計 (字體大小、間距、按鈕尺寸適應不同螢幕)
 - [ ] T071 [P] 實作 Toast/Dialog 元件響應式設計 (手機上全寬顯示、桌面上固定寬度)
-- [ ] T072 撰寫響應式設計測試 (測試 <768px/768-1024px/>1024px 三種寬度下的佈局)
-- [ ] T073 執行完整測試套件與效能測試 (FCP < 1.5s, 互動回應 < 100ms, 大量資料 500-1000 項)
+- [ ] T071a 安裝 Playwright (@playwright/test, 執行 npx playwright install --with-deps)
+- [ ] T071b 配置 Playwright (建立 playwright.config.ts, 設定測試目錄 tests/playwright, 配置 chromium/firefox/webkit/mobile 專案)
+- [ ] T072 [Playwright] 撰寫響應式設計 E2E 測試在 tests/playwright/responsive.spec.ts (測試 <768px/768-1024px/>1024px 三種寬度, 驗證 T068-T071 的實作)
+- [ ] T072a [Playwright] 撰寫跨瀏覽器相容性測試在 tests/playwright/cross-browser.spec.ts (在 Chromium/Firefox/WebKit 上測試關鍵流程)
+- [ ] T073 執行完整測試套件與效能測試 (Vitest + Playwright, FCP < 1.5s, 互動回應 < 100ms, 大量資料 500-1000 項)
 
 ---
 
@@ -299,7 +302,7 @@ Setup → Foundational → US1 → 完成
 **完整功能交付**:
 ```
 Setup → Foundational → US1 → US2 → US3 → US4 → Polish → 完成
-預估: 6 + 8 + 20 + 8 + 8 + 11 + 12 = 73 個任務
+預估: 6 + 8 + 20 + 8 + 8 + 11 + 15 = 76 個任務
 ```
 
 ---
@@ -398,16 +401,19 @@ T051-T061
 - [ ] ✅ Toast 通知系統運作正常
 - [ ] ✅ localStorage 失敗時警告橫幅顯示
 - [ ] ✅ 響應式設計在 3 種裝置 (<768px, 768-1024px, >1024px) 正常運作
+- [ ] ✅ Playwright 響應式設計測試通過 (3 種螢幕尺寸)
+- [ ] ✅ 跨瀏覽器測試通過 (Chrome, Firefox, Safari)
 - [ ] ✅ 效能目標達成 (FCP < 1.5s, 互動 < 100ms)
 
 ### 最終發布檢查清單
-- [ ] ✅ 所有 E2E 測試通過
+- [ ] ✅ 所有 Vitest 測試通過 (單元測試、元件測試、基本整合測試)
+- [ ] ✅ 所有 Playwright E2E 測試通過 (響應式設計、跨瀏覽器)
 - [ ] ✅ 測試覆蓋率 ≥ 80%
 - [ ] ✅ 無 ESLint 錯誤
 - [ ] ✅ 無 TypeScript 錯誤
 - [ ] ✅ 效能測試通過 (SC-001 至 SC-008)
 - [ ] ✅ 無障礙性檢查通過 (鍵盤導航、ARIA 標籤)
-- [ ] ✅ 跨瀏覽器測試通過 (Chrome, Firefox, Safari, Edge)
+- [ ] ✅ 跨瀏覽器測試通過 (Chrome, Firefox, Safari via Playwright)
 - [ ] ✅ 生產環境建置無錯誤 (`npm run build`)
 
 ---
