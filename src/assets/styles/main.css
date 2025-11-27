@@ -1,0 +1,199 @@
+/**
+ * Tailwind CSS 入口檔案
+ * 包含 Tailwind directives 與自訂樣式
+ */
+
+/* Tailwind CSS 基礎樣式 */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 自訂基礎樣式 */
+@layer base {
+  /* 設定全域字體與基礎樣式 */
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+
+  /* 設定無障礙聚焦樣式 */
+  *:focus-visible {
+    @apply outline-2 outline-offset-2 outline-blue-500;
+  }
+
+  /* 設定按鈕與互動元素的預設游標 */
+  button,
+  [role='button'],
+  input[type='submit'],
+  input[type='button'] {
+    @apply cursor-pointer;
+  }
+
+  /* 設定停用狀態的游標 */
+  button:disabled,
+  [role='button']:disabled,
+  input:disabled {
+    @apply cursor-not-allowed opacity-50;
+  }
+}
+
+/* 自訂元件樣式 */
+@layer components {
+  /* 按鈕基礎樣式 */
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+  }
+
+  /* 主要按鈕 */
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800;
+    @apply focus-visible:ring-blue-500;
+  }
+
+  /* 次要按鈕 */
+  .btn-secondary {
+    @apply bg-gray-200 text-gray-700 hover:bg-gray-300 active:bg-gray-400;
+    @apply focus-visible:ring-gray-500;
+  }
+
+  /* 危險按鈕 (刪除等) */
+  .btn-danger {
+    @apply bg-red-600 text-white hover:bg-red-700 active:bg-red-800;
+    @apply focus-visible:ring-red-500;
+  }
+
+  /* 輸入框基礎樣式 */
+  .input {
+    @apply px-4 py-2 border border-gray-300 rounded-lg;
+    @apply focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500;
+    @apply placeholder:text-gray-400;
+    @apply transition-colors duration-200;
+  }
+
+  .input:disabled {
+    @apply bg-gray-100 cursor-not-allowed;
+  }
+
+  /* 錯誤狀態的輸入框 */
+  .input-error {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-500;
+  }
+
+  /* 卡片樣式 */
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-200;
+  }
+
+  /* Toast 通知基礎樣式 */
+  .toast {
+    @apply px-4 py-3 rounded-lg shadow-lg flex items-center gap-3;
+    @apply animate-slide-in-right;
+  }
+
+  .toast-success {
+    @apply bg-green-50 text-green-800 border border-green-200;
+  }
+
+  .toast-error {
+    @apply bg-red-50 text-red-800 border border-red-200;
+  }
+
+  .toast-warning {
+    @apply bg-yellow-50 text-yellow-800 border border-yellow-200;
+  }
+
+  .toast-info {
+    @apply bg-blue-50 text-blue-800 border border-blue-200;
+  }
+
+  /* 對話框覆蓋層 */
+  .dialog-overlay {
+    @apply fixed inset-0 bg-black bg-opacity-50 z-40;
+    @apply animate-fade-in;
+  }
+
+  /* 對話框內容 */
+  .dialog-content {
+    @apply fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2;
+    @apply bg-white rounded-lg shadow-xl z-50;
+    @apply animate-scale-in;
+    @apply max-w-md w-full mx-4;
+  }
+
+  /* 警告橫幅 */
+  .warning-banner {
+    @apply bg-yellow-50 border-l-4 border-yellow-400 p-4;
+    @apply flex items-start gap-3;
+  }
+}
+
+/* 自訂工具樣式 */
+@layer utilities {
+  /* 動畫 - 淡入 */
+  .animate-fade-in {
+    animation: fadeIn 200ms ease-out;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* 動畫 - 由右滑入 */
+  .animate-slide-in-right {
+    animation: slideInRight 300ms ease-out;
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  /* 動畫 - 縮放進入 */
+  .animate-scale-in {
+    animation: scaleIn 200ms ease-out;
+  }
+
+  @keyframes scaleIn {
+    from {
+      transform: translate(-50%, -50%) scale(0.95);
+      opacity: 0;
+    }
+    to {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+    }
+  }
+
+  /* 截斷文字 */
+  .truncate-2-lines {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* 滾動條樣式 (適用於 Webkit 瀏覽器) */
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    @apply bg-gray-100 rounded-full;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 rounded-full hover:bg-gray-400;
+  }
+}
