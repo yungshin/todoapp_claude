@@ -171,53 +171,39 @@ describe('TodoInput', () => {
   });
 
   describe('validation', () => {
-    it('should show error for empty input', async () => {
+    it('should disable button for empty input', async () => {
       wrapper = mount(TodoInput);
 
       const button = wrapper.find('button');
-      await button.trigger('click');
-      await flushPromises();
 
-      // Debug: check HTML output
-      // console.log(wrapper.html());
-
-      const errorMessage = wrapper.find('.text-red-600');
-      expect(errorMessage.exists()).toBe(true);
-      expect(errorMessage.text()).toBe('請輸入待辦事項內容');
+      // 按鈕應該被停用（因為輸入框為空）
+      expect((button.element as HTMLButtonElement).disabled).toBe(true);
     });
 
-    it('should show error for whitespace-only input', async () => {
+    it('should disable button for whitespace-only input', async () => {
       wrapper = mount(TodoInput);
 
       const input = wrapper.find('input');
       const button = wrapper.find('button');
 
       await input.setValue('   ');
-      await button.trigger('click');
-      await flushPromises();
 
-      const errorMessage = wrapper.find('.text-red-600');
-      expect(errorMessage.exists()).toBe(true);
-      expect(errorMessage.text()).toBe('請輸入待辦事項內容');
+      // 按鈕應該被停用（因為 trim 後為空）
+      expect((button.element as HTMLButtonElement).disabled).toBe(true);
     });
 
-    it('should clear error message when valid input is entered', async () => {
+    it('should enable button when valid input is entered', async () => {
       wrapper = mount(TodoInput);
 
       const input = wrapper.find('input');
       const button = wrapper.find('button');
 
-      // 先觸發錯誤
-      await button.trigger('click');
-      await flushPromises();
-      expect(wrapper.find('.text-red-600').exists()).toBe(true);
+      // 初始狀態：按鈕被停用
+      expect((button.element as HTMLButtonElement).disabled).toBe(true);
 
-      // 輸入有效文字
+      // 輸入有效文字後，按鈕應該啟用
       await input.setValue('有效的待辦事項');
-      await button.trigger('click');
-      await flushPromises();
-
-      expect(wrapper.find('.text-red-600').exists()).toBe(false);
+      expect((button.element as HTMLButtonElement).disabled).toBe(false);
     });
 
     it('should not add todo when input is empty', async () => {
@@ -247,23 +233,23 @@ describe('TodoInput', () => {
   });
 
   describe('button states', () => {
-    it('should show visual feedback when input is empty', async () => {
+    it('should disable button when input is empty', async () => {
       wrapper = mount(TodoInput);
 
       const button = wrapper.find('button');
-      // 按鈕不會 disabled，但會有視覺回饋（opacity-50）
-      expect(button.classes()).toContain('opacity-50');
+      // 按鈕應該被停用
+      expect((button.element as HTMLButtonElement).disabled).toBe(true);
     });
 
-    it('should show visual feedback when input is whitespace only', async () => {
+    it('should disable button when input is whitespace only', async () => {
       wrapper = mount(TodoInput);
 
       const input = wrapper.find('input');
       await input.setValue('   ');
 
       const button = wrapper.find('button');
-      // 按鈕不會 disabled，但會有視覺回饋（opacity-50）
-      expect(button.classes()).toContain('opacity-50');
+      // 按鈕應該被停用
+      expect((button.element as HTMLButtonElement).disabled).toBe(true);
     });
 
     it('should enable submit button when input has valid text', async () => {
