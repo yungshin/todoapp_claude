@@ -67,6 +67,9 @@ export const useTodosStore = defineStore('todos', () => {
     // 加入陣列
     todos.value.push(todo);
 
+    // 自動儲存到 localStorage
+    saveTodos();
+
     return todo;
   }
 
@@ -79,6 +82,9 @@ export const useTodosStore = defineStore('todos', () => {
     if (todo) {
       todo.completed = !todo.completed;
       todo.updatedAt = Date.now();
+
+      // 自動儲存到 localStorage
+      saveTodos();
     }
   }
 
@@ -99,6 +105,9 @@ export const useTodosStore = defineStore('todos', () => {
     if (todo) {
       todo.text = text.trim();
       todo.updatedAt = Date.now();
+
+      // 自動儲存到 localStorage
+      saveTodos();
     }
   }
 
@@ -110,6 +119,9 @@ export const useTodosStore = defineStore('todos', () => {
     const index = todos.value.findIndex((t) => t.id === id);
     if (index !== -1) {
       todos.value.splice(index, 1);
+
+      // 自動儲存到 localStorage
+      saveTodos();
     }
   }
 
