@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { mount, VueWrapper } from '@vue/test-utils';
+import { mount, VueWrapper, flushPromises } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
 import TodoInput from '@/components/TodoInput.vue';
 import { useTodosStore } from '@/stores/todos';
@@ -176,6 +176,10 @@ describe('TodoInput', () => {
 
       const button = wrapper.find('button');
       await button.trigger('click');
+      await flushPromises();
+
+      // Debug: check HTML output
+      // console.log(wrapper.html());
 
       const errorMessage = wrapper.find('.text-red-600');
       expect(errorMessage.exists()).toBe(true);
@@ -190,6 +194,7 @@ describe('TodoInput', () => {
 
       await input.setValue('   ');
       await button.trigger('click');
+      await flushPromises();
 
       const errorMessage = wrapper.find('.text-red-600');
       expect(errorMessage.exists()).toBe(true);
@@ -204,11 +209,13 @@ describe('TodoInput', () => {
 
       // 先觸發錯誤
       await button.trigger('click');
+      await flushPromises();
       expect(wrapper.find('.text-red-600').exists()).toBe(true);
 
       // 輸入有效文字
       await input.setValue('有效的待辦事項');
       await button.trigger('click');
+      await flushPromises();
 
       expect(wrapper.find('.text-red-600').exists()).toBe(false);
     });
@@ -240,21 +247,23 @@ describe('TodoInput', () => {
   });
 
   describe('button states', () => {
-    it('should disable submit button when input is empty', async () => {
+    it('should show visual feedback when input is empty', async () => {
       wrapper = mount(TodoInput);
 
       const button = wrapper.find('button');
-      expect(button.attributes('disabled')).toBeDefined();
+      // 按鈕不會 disabled，但會有視覺回饋（opacity-50）
+      expect(button.classes()).toContain('opacity-50');
     });
 
-    it('should disable submit button when input is whitespace only', async () => {
+    it('should show visual feedback when input is whitespace only', async () => {
       wrapper = mount(TodoInput);
 
       const input = wrapper.find('input');
       await input.setValue('   ');
 
       const button = wrapper.find('button');
-      expect(button.attributes('disabled')).toBeDefined();
+      // 按鈕不會 disabled，但會有視覺回饋（opacity-50）
+      expect(button.classes()).toContain('opacity-50');
     });
 
     it('should enable submit button when input has valid text', async () => {
