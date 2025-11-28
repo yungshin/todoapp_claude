@@ -1,16 +1,26 @@
 <script setup lang="ts">
-// Placeholder for Todo App
+import { onMounted } from 'vue';
+import { useTodosStore } from '@/stores/todos';
+import TodoList from '@/components/TodoList.vue';
+
+// 使用 Pinia store
+const todosStore = useTodosStore();
+
+// 應用程式初始化時載入 localStorage 資料
+onMounted(() => {
+  todosStore.loadTodos();
+});
 </script>
 
 <template>
-  <div>
-    <h1>Todo App</h1>
-    <p>Vue 3 + TypeScript + Vite 專案已建立成功</p>
-  </div>
-</template>
+  <main class="min-h-screen bg-gray-50">
+    <div class="container mx-auto">
+      <header class="py-8 text-center">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">待辦事項</h1>
+        <p class="text-gray-600">輕鬆管理您的每日任務</p>
+      </header>
 
-<style scoped>
-h1 {
-  color: #42b983;
-}
-</style>
+      <TodoList />
+    </div>
+  </main>
+</template>
