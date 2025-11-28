@@ -7,7 +7,14 @@ describe('useTodosStore', () => {
   beforeEach(() => {
     setActivePinia(createPinia());
     // 清空 localStorage mock
-    localStorage.clear();
+    if (typeof localStorage.clear === 'function') {
+      localStorage.clear();
+    } else {
+      // 手動清空 localStorage (for jsdom compatibility)
+      Object.keys(localStorage).forEach((key) => {
+        localStorage.removeItem(key);
+      });
+    }
   });
 
   describe('addTodo', () => {
@@ -93,9 +100,9 @@ describe('useTodosStore', () => {
       store.todos[1].completed = true;
 
       expect(store.activeTodos).toHaveLength(2);
-      expect(store.activeTodos).toContain(todo1);
-      expect(store.activeTodos).toContain(todo3);
-      expect(store.activeTodos).not.toContain(todo2);
+      expect(store.activeTodos.map((t) => t.id)).toContain(todo1.id);
+      expect(store.activeTodos.map((t) => t.id)).toContain(todo3.id);
+      expect(store.activeTodos.map((t) => t.id)).not.toContain(todo2.id);
     });
 
     it('should return empty array when all todos are completed', () => {
@@ -178,7 +185,7 @@ describe('useTodosStore', () => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       // 模擬 localStorage 空間不足
-      const setItemSpy = vi.spyOn(Storage.prototype, 'setItem');
+      const setItemSpy = vi.spyOn(localStorage, 'setItem');
       setItemSpy.mockImplementation(() => {
         const error = new DOMException('QuotaExceededError');
         error.name = 'QuotaExceededError';
@@ -258,7 +265,7 @@ describe('useTodosStore', () => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       // 模擬 localStorage 讀取錯誤
-      const getItemSpy = vi.spyOn(Storage.prototype, 'getItem');
+      const getItemSpy = vi.spyOn(localStorage, 'getItem');
       getItemSpy.mockImplementation(() => {
         throw new Error('localStorage read error');
       });
