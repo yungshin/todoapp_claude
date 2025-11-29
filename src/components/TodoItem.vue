@@ -25,9 +25,8 @@ defineProps<Props>();
 
     <!-- 待辦事項文字 -->
     <span
-      class="flex-1 text-gray-800 break-words whitespace-normal overflow-wrap-anywhere"
+      class="flex-1 text-gray-800 break-words"
       :class="{ 'line-through text-gray-500': todo.completed }"
-      style="word-break: break-word; overflow-wrap: anywhere;"
     >
       {{ todo.text }}
     </span>
