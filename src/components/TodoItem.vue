@@ -17,7 +17,7 @@ const todosStore = useTodosStore();
 const isEditing = ref(false);
 const editText = ref('');
 const editError = ref('');
-const editInputRef = ref<HTMLInputElement | null>(null);
+const editInputRef = ref<{ focus: () => void } | null>(null);
 
 // Handlers
 /**
@@ -83,7 +83,7 @@ function exitEditMode() {
 /**
  * 處理鍵盤事件
  */
-function handleKeydown(event: KeyboardEvent) {
+function handleKeydown(event: { key: string }) {
   if (event.key === 'Enter') {
     saveEdit();
   } else if (event.key === 'Escape') {
