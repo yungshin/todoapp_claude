@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { mount, VueWrapper, flushPromises } from '@vue/test-utils';
+import { mount, VueWrapper } from '@vue/test-utils';
 import { setActivePinia, createPinia } from 'pinia';
 import TodoInput from '@/components/TodoInput.vue';
 import { useTodosStore } from '@/stores/todos';

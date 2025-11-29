@@ -2,20 +2,20 @@
   <div class="space-y-2">
     <div class="flex gap-2">
       <input
+        ref="inputRef"
         v-model="inputText"
-        @input="updateCharacterCount"
-        @keydown.enter="handleSubmit"
         type="text"
         maxlength="500"
         placeholder="輸入待辦事項..."
         class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         aria-label="新增待辦事項輸入框"
-        ref="inputRef"
+        @input="updateCharacterCount"
+        @keydown.enter="handleSubmit"
       />
       <button
-        @click="handleSubmit"
         :disabled="!inputText.trim() || isSubmitting"
         class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        @click="handleSubmit"
       >
         新增
       </button>
@@ -52,6 +52,7 @@ import { useTodosStore } from '@/stores/todos';
 const inputText = ref('');
 const errorMessage = ref<string | null>(null);
 const isSubmitting = ref(false);
+// eslint-disable-next-line no-undef
 const inputRef = ref<HTMLInputElement | null>(null);
 
 const todosStore = useTodosStore();

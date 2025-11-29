@@ -292,7 +292,7 @@ describe('User Story 2 - 標示完成狀態', () => {
 
       const store1 = useTodosStore();
       const todo1 = store1.addTodo('任務 1');
-      const todo2 = store1.addTodo('任務 2');
+      const _todo2 = store1.addTodo('任務 2');
       const todo3 = store1.addTodo('任務 3');
 
       // 標記部分為完成

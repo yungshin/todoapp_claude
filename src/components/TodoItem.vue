@@ -30,9 +30,9 @@ function handleToggle() {
     <input
       type="checkbox"
       :checked="todo.completed"
-      @change="handleToggle"
       class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
       :aria-label="todo.completed ? '標記為未完成' : '標記為已完成'"
+      @change="handleToggle"
     />
 
     <!-- 待辦事項文字 -->

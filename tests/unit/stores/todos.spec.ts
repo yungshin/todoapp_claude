@@ -1,7 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { setActivePinia, createPinia } from 'pinia';
 import { useTodosStore } from '@/stores/todos';
-import type { TodoItem } from '@/types/todo';
 
 describe('useTodosStore', () => {
   beforeEach(() => {
@@ -229,7 +228,7 @@ describe('useTodosStore', () => {
       const store = useTodosStore();
 
       const todo1 = store.addTodo('任務 1');
-      const todo2 = store.addTodo('任務 2');
+      const _todo2 = store.addTodo('任務 2');
       const todo3 = store.addTodo('任務 3');
 
       store.toggleTodo(todo1.id);
