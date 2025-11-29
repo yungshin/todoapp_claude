@@ -150,6 +150,98 @@ describe('useTodosStore', () => {
     });
   });
 
+  describe('completedTodos getter', () => {
+    it('should return only completed todos', () => {
+      const store = useTodosStore();
+
+      const todo1 = store.addTodo('任務 1');
+      const todo2 = store.addTodo('任務 2');
+      const todo3 = store.addTodo('任務 3');
+
+      // 標記部分為完成
+      store.toggleTodo(todo1.id);
+      store.toggleTodo(todo3.id);
+
+      expect(store.completedTodos).toHaveLength(2);
+      expect(store.completedTodos.map((t) => t.id)).toContain(todo1.id);
+      expect(store.completedTodos.map((t) => t.id)).toContain(todo3.id);
+      expect(store.completedTodos.map((t) => t.id)).not.toContain(todo2.id);
+    });
+
+    it('should return empty array when no todos are completed', () => {
+      const store = useTodosStore();
+
+      store.addTodo('任務 1');
+      store.addTodo('任務 2');
+
+      expect(store.completedTodos).toHaveLength(0);
+    });
+
+    it('should return all todos when all are completed', () => {
+      const store = useTodosStore();
+
+      const todo1 = store.addTodo('任務 1');
+      const todo2 = store.addTodo('任務 2');
+
+      store.toggleTodo(todo1.id);
+      store.toggleTodo(todo2.id);
+
+      expect(store.completedTodos).toHaveLength(2);
+      expect(store.completedTodos.map((t) => t.id)).toContain(todo1.id);
+      expect(store.completedTodos.map((t) => t.id)).toContain(todo2.id);
+    });
+
+    it('should return empty array when there are no todos', () => {
+      const store = useTodosStore();
+
+      expect(store.completedTodos).toHaveLength(0);
+    });
+
+    it('should sort completed todos by createdAt in descending order (newest first)', () => {
+      const store = useTodosStore();
+
+      vi.useFakeTimers();
+
+      vi.setSystemTime(new Date('2025-01-01T10:00:00Z'));
+      const todo1 = store.addTodo('最舊的任務');
+
+      vi.setSystemTime(new Date('2025-01-01T11:00:00Z'));
+      const todo2 = store.addTodo('中間的任務');
+
+      vi.setSystemTime(new Date('2025-01-01T12:00:00Z'));
+      const todo3 = store.addTodo('最新的任務');
+
+      // 全部標記為完成
+      store.toggleTodo(todo1.id);
+      store.toggleTodo(todo2.id);
+      store.toggleTodo(todo3.id);
+
+      vi.useRealTimers();
+
+      const completedTodos = store.completedTodos;
+
+      expect(completedTodos[0]).toEqual(todo3); // 最新的在前
+      expect(completedTodos[1]).toEqual(todo2);
+      expect(completedTodos[2]).toEqual(todo1);
+    });
+
+    it('should verify all completed todos have completed flag set to true', () => {
+      const store = useTodosStore();
+
+      const todo1 = store.addTodo('任務 1');
+      const todo2 = store.addTodo('任務 2');
+      const todo3 = store.addTodo('任務 3');
+
+      store.toggleTodo(todo1.id);
+      store.toggleTodo(todo3.id);
+
+      const completedTodos = store.completedTodos;
+
+      expect(completedTodos.every((todo) => todo.completed === true)).toBe(true);
+      expect(completedTodos).toHaveLength(2);
+    });
+  });
+
   describe('saveTodos', () => {
     it('should save todos to localStorage with correct structure', () => {
       const store = useTodosStore();
