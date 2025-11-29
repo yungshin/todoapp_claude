@@ -456,6 +456,146 @@ describe('useTodosStore', () => {
     });
   });
 
+  describe('updateTodo', () => {
+    it('should update todo text successfully', () => {
+      const store = useTodosStore();
+
+      const todo = store.addTodo('原始文字');
+      const updatedText = '更新後的文字';
+
+      store.updateTodo(todo.id, updatedText);
+
+      const updatedTodo = store.todos.find((t) => t.id === todo.id);
+      expect(updatedTodo).toBeDefined();
+      expect(updatedTodo!.text).toBe(updatedText);
+    });
+
+    it('should trim whitespace from updated text', () => {
+      const store = useTodosStore();
+
+      const todo = store.addTodo('原始文字');
+
+      store.updateTodo(todo.id, '  更新後的文字  ');
+
+      const updatedTodo = store.todos.find((t) => t.id === todo.id);
+      expect(updatedTodo!.text).toBe('更新後的文字');
+    });
+
+    it('should throw error for empty text', () => {
+      const store = useTodosStore();
+
+      const todo = store.addTodo('原始文字');
+
+      expect(() => store.updateTodo(todo.id, '')).toThrow('請輸入待辦事項內容');
+      expect(() => store.updateTodo(todo.id, '   ')).toThrow('請輸入待辦事項內容');
+    });
+
+    it('should throw error for text longer than 500 characters', () => {
+      const store = useTodosStore();
+
+      const todo = store.addTodo('原始文字');
+      const longText = 'a'.repeat(501);
+
+      expect(() => store.updateTodo(todo.id, longText)).toThrow(
+        '待辦事項文字不可超過 500 字元',
+      );
+    });
+
+    it('should accept text with exactly 500 characters', () => {
+      const store = useTodosStore();
+
+      const todo = store.addTodo('原始文字');
+      const text = 'a'.repeat(500);
+
+      store.updateTodo(todo.id, text);
+
+      const updatedTodo = store.todos.find((t) => t.id === todo.id);
+      expect(updatedTodo!.text).toHaveLength(500);
+    });
+
+    it('should update updatedAt timestamp when updating', () => {
+      const store = useTodosStore();
+      vi.useFakeTimers();
+
+      vi.setSystemTime(new Date('2025-01-01T10:00:00Z'));
+      const todo = store.addTodo('原始文字');
+      const originalUpdatedAt = todo.updatedAt;
+
+      vi.setSystemTime(new Date('2025-01-01T11:00:00Z'));
+      store.updateTodo(todo.id, '更新後的文字');
+
+      const updatedTodo = store.todos.find((t) => t.id === todo.id);
+      expect(updatedTodo!.updatedAt).toBeGreaterThan(originalUpdatedAt);
+      expect(updatedTodo!.updatedAt).toBe(new Date('2025-01-01T11:00:00Z').getTime());
+
+      vi.useRealTimers();
+    });
+
+    it('should not update createdAt timestamp', () => {
+      const store = useTodosStore();
+
+      const todo = store.addTodo('原始文字');
+      const originalCreatedAt = todo.createdAt;
+
+      store.updateTodo(todo.id, '更新後的文字');
+
+      const updatedTodo = store.todos.find((t) => t.id === todo.id);
+      expect(updatedTodo!.createdAt).toBe(originalCreatedAt);
+    });
+
+    it('should save to localStorage when updating', () => {
+      const store = useTodosStore();
+
+      const todo = store.addTodo('原始文字');
+      localStorage.clear();
+
+      store.updateTodo(todo.id, '更新後的文字');
+
+      const savedData = localStorage.getItem('todos-app-data');
+      expect(savedData).toBeTruthy();
+
+      const parsed = JSON.parse(savedData!);
+      expect(parsed.todos[0].text).toBe('更新後的文字');
+    });
+
+    it('should throw error when id does not exist', () => {
+      const store = useTodosStore();
+
+      store.addTodo('測試任務');
+
+      expect(() => store.updateTodo('non-existent-id', '新文字')).toThrow(
+        '找不到指定的待辦事項',
+      );
+    });
+
+    it('should only update the specific todo', () => {
+      const store = useTodosStore();
+
+      const todo1 = store.addTodo('任務 1');
+      const todo2 = store.addTodo('任務 2');
+      const todo3 = store.addTodo('任務 3');
+
+      store.updateTodo(todo2.id, '任務 2 已更新');
+
+      expect(store.todos.find((t) => t.id === todo1.id)!.text).toBe('任務 1');
+      expect(store.todos.find((t) => t.id === todo2.id)!.text).toBe('任務 2 已更新');
+      expect(store.todos.find((t) => t.id === todo3.id)!.text).toBe('任務 3');
+    });
+
+    it('should not change completed status when updating text', () => {
+      const store = useTodosStore();
+
+      const todo = store.addTodo('原始文字');
+      store.toggleTodo(todo.id); // 標記為完成
+
+      store.updateTodo(todo.id, '更新後的文字');
+
+      const updatedTodo = store.todos.find((t) => t.id === todo.id);
+      expect(updatedTodo!.completed).toBe(true);
+      expect(updatedTodo!.text).toBe('更新後的文字');
+    });
+  });
+
   describe('integration: addTodo and saveTodos', () => {
     it('should persist todos when addTodo is called with saveTodos', () => {
       const store = useTodosStore();
