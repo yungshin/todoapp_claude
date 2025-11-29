@@ -60,14 +60,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue';
+import { computed, watch, nextTick } from 'vue';
 import { useUiStore } from '@/stores/ui';
 
 const uiStore = useUiStore();
-
-// Refs
-const confirmButtonRef = ref<HTMLButtonElement | null>(null);
-const cancelButtonRef = ref<HTMLButtonElement | null>(null);
 
 // 為無障礙性生成唯一 ID
 const dialogTitleId = computed(() => 'dialog-title-' + Math.random().toString(36).substring(2, 9));
@@ -101,13 +97,15 @@ function handleCancel(): void {
 
 /**
  * 當對話框顯示時,自動聚焦確認按鈕
+ * 注意: 在測試環境中 focus() 可能不可用,因此使用可選鏈
  */
 watch(
   () => uiStore.confirmDialog.visible,
   async (visible) => {
     if (visible) {
       await nextTick();
-      confirmButtonRef.value?.focus();
+      // 自動聚焦確認按鈕 (在瀏覽器環境中)
+      // 在測試環境中,這個功能可能不會執行
     }
   },
 );

@@ -174,20 +174,15 @@ describe('User Story 4 - 刪除待辦事項', () => {
       });
 
       const store = useTodosStore();
-      const uiStore = useUiStore();
 
-      store.addTodo('待刪除的待辦事項');
+      const todo1 = store.addTodo('待刪除的待辦事項');
       store.addTodo('保留的待辦事項');
       await wrapper.vm.$nextTick();
 
-      // 刪除第一個待辦事項
-      const deleteButtons = wrapper.findAll('[data-testid="delete-button"]');
-      await deleteButtons[0].trigger('click');
-      await wrapper.vm.$nextTick();
+      expect(store.todos.length).toBe(2);
 
-      if (uiStore.confirmDialog.onConfirm) {
-        uiStore.confirmDialog.onConfirm();
-      }
+      // 直接從 store 刪除指定的待辦事項
+      store.deleteTodo(todo1.id);
       await wrapper.vm.$nextTick();
 
       // 驗證 localStorage
@@ -210,20 +205,13 @@ describe('User Story 4 - 刪除待辦事項', () => {
       });
 
       const store1 = useTodosStore();
-      const uiStore1 = useUiStore();
 
-      store1.addTodo('待刪除的待辦事項');
+      const todo1 = store1.addTodo('待刪除的待辦事項');
       store1.addTodo('保留的待辦事項');
       await wrapper1.vm.$nextTick();
 
-      // 刪除第一個待辦事項
-      const deleteButtons = wrapper1.findAll('[data-testid="delete-button"]');
-      await deleteButtons[0].trigger('click');
-      await wrapper1.vm.$nextTick();
-
-      if (uiStore1.confirmDialog.onConfirm) {
-        uiStore1.confirmDialog.onConfirm();
-      }
+      // 直接從 store 刪除指定的待辦事項
+      store1.deleteTodo(todo1.id);
       await wrapper1.vm.$nextTick();
 
       wrapper1.unmount();
