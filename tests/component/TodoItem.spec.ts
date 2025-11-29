@@ -14,14 +14,8 @@ describe('TodoItem - Edit Mode', () => {
     setActivePinia(createPinia());
     store = useTodosStore();
 
-    // 建立一個測試用的待辦事項
-    mockTodo = {
-      id: 'test-id-1',
-      text: '原始待辦事項文字',
-      completed: false,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
+    // 在 store 中新增一個測試用的待辦事項
+    mockTodo = store.addTodo('原始待辦事項文字');
   });
 
   afterEach(() => {
@@ -106,6 +100,7 @@ describe('TodoItem - Edit Mode', () => {
 
       // 點擊儲存按鈕
       await wrapper.find('[data-testid="save-button"]').trigger('click');
+      await wrapper.vm.$nextTick();
 
       // 應該呼叫 store 的 updateTodo
       // 註：實際實作時需要使用 spy 來驗證
@@ -126,7 +121,8 @@ describe('TodoItem - Edit Mode', () => {
       await editInput.setValue('更新後的文字');
 
       // 按下 Enter 鍵
-      await editInput.trigger('keydown.enter');
+      await editInput.trigger('keydown', { key: 'Enter' });
+      await wrapper.vm.$nextTick();
 
       // 應該退出編輯模式
       expect(wrapper.find('[data-testid="edit-input"]').exists()).toBe(false);
@@ -234,7 +230,8 @@ describe('TodoItem - Edit Mode', () => {
       await editInput.setValue('這些變更應該被取消');
 
       // 按下 ESC 鍵
-      await editInput.trigger('keydown.esc');
+      await editInput.trigger('keydown', { key: 'Escape' });
+      await wrapper.vm.$nextTick();
 
       // 應該退出編輯模式
       expect(wrapper.find('[data-testid="edit-input"]').exists()).toBe(false);

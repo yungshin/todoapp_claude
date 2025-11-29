@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref, nextTick } from 'vue';
 import type { TodoItem } from '@/types/todo';
 import { useTodosStore } from '@/stores/todos';
 
@@ -12,12 +13,91 @@ const props = defineProps<Props>();
 // Store
 const todosStore = useTodosStore();
 
+// 編輯狀態管理
+const isEditing = ref(false);
+const editText = ref('');
+const editError = ref('');
+const editInputRef = ref<HTMLInputElement | null>(null);
+
 // Handlers
 /**
  * 處理核取方塊點擊事件，切換待辦事項的完成狀態
  */
 function handleToggle() {
   todosStore.toggleTodo(props.todo.id);
+}
+
+/**
+ * 進入編輯模式
+ */
+async function enterEditMode() {
+  isEditing.value = true;
+  editText.value = props.todo.text;
+  editError.value = '';
+
+  // 等待 DOM 更新後自動聚焦輸入框
+  await nextTick();
+  editInputRef.value?.focus();
+}
+
+/**
+ * 儲存編輯
+ */
+function saveEdit() {
+  const trimmedText = editText.value.trim();
+
+  // 驗證空白文字
+  if (!trimmedText) {
+    editError.value = '請輸入待辦事項內容';
+    return;
+  }
+
+  try {
+    // 呼叫 store 的 updateTodo
+    todosStore.updateTodo(props.todo.id, trimmedText);
+
+    // 成功後退出編輯模式
+    exitEditMode();
+  } catch (error) {
+    // 顯示錯誤訊息
+    editError.value = error instanceof Error ? error.message : '更新失敗';
+  }
+}
+
+/**
+ * 取消編輯
+ */
+function cancelEdit() {
+  exitEditMode();
+}
+
+/**
+ * 退出編輯模式
+ */
+function exitEditMode() {
+  isEditing.value = false;
+  editText.value = '';
+  editError.value = '';
+}
+
+/**
+ * 處理鍵盤事件
+ */
+function handleKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter') {
+    saveEdit();
+  } else if (event.key === 'Escape') {
+    cancelEdit();
+  }
+}
+
+/**
+ * 當輸入改變時清除錯誤訊息
+ */
+function handleInput() {
+  if (editError.value) {
+    editError.value = '';
+  }
 }
 </script>
 
@@ -30,17 +110,60 @@ function handleToggle() {
     <input
       type="checkbox"
       :checked="todo.completed"
-      class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer"
+      class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer flex-shrink-0"
       :aria-label="todo.completed ? '標記為未完成' : '標記為已完成'"
       @change="handleToggle"
     />
 
-    <!-- 待辦事項文字 -->
+    <!-- 檢視模式：顯示待辦事項文字 -->
     <span
-      class="flex-1 text-gray-800 break-all"
-      :class="{ 'line-through text-gray-500': todo.completed }"
+      v-if="!isEditing"
+      data-testid="todo-text"
+      class="flex-1 text-gray-800 break-all cursor-pointer hover:text-blue-600 transition-colors"
+      :class="{ 'line-through text-gray-500 hover:text-gray-600': todo.completed }"
+      @click="enterEditMode"
     >
       {{ todo.text }}
     </span>
+
+    <!-- 編輯模式：顯示輸入框與按鈕 -->
+    <div v-else class="flex-1 flex flex-col gap-2">
+      <div class="flex gap-2">
+        <input
+          ref="editInputRef"
+          v-model="editText"
+          data-testid="edit-input"
+          type="text"
+          maxlength="500"
+          class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          :class="{ 'border-red-500 focus:ring-red-500': editError }"
+          @keydown="handleKeydown"
+          @input="handleInput"
+        />
+
+        <button
+          data-testid="save-button"
+          type="button"
+          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+          @click="saveEdit"
+        >
+          儲存
+        </button>
+
+        <button
+          data-testid="cancel-button"
+          type="button"
+          class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors"
+          @click="cancelEdit"
+        >
+          取消
+        </button>
+      </div>
+
+      <!-- 錯誤訊息 -->
+      <p v-if="editError" class="text-sm text-red-500">
+        {{ editError }}
+      </p>
+    </div>
   </div>
 </template>
