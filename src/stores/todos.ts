@@ -92,7 +92,7 @@ export const useTodosStore = defineStore('todos', () => {
    * 更新待辦事項文字
    * @param id - 待辦事項 ID
    * @param text - 新文字
-   * @throws 驗證失敗時拋出錯誤
+   * @throws 驗證失敗或 ID 不存在時拋出錯誤
    */
   function updateTodo(id: string, text: string): void {
     // 驗證文字
@@ -102,13 +102,15 @@ export const useTodosStore = defineStore('todos', () => {
     }
 
     const todo = todos.value.find((t) => t.id === id);
-    if (todo) {
-      todo.text = text.trim();
-      todo.updatedAt = Date.now();
-
-      // 自動儲存到 localStorage
-      saveTodos();
+    if (!todo) {
+      throw new Error('找不到指定的待辦事項');
     }
+
+    todo.text = text.trim();
+    todo.updatedAt = Date.now();
+
+    // 自動儲存到 localStorage
+    saveTodos();
   }
 
   /**
