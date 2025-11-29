@@ -596,6 +596,107 @@ describe('useTodosStore', () => {
     });
   });
 
+  describe('deleteTodo', () => {
+    it('should delete todo from the list', () => {
+      const store = useTodosStore();
+
+      const todo1 = store.addTodo('任務 1');
+      const todo2 = store.addTodo('任務 2');
+      const todo3 = store.addTodo('任務 3');
+
+      expect(store.todos).toHaveLength(3);
+
+      store.deleteTodo(todo2.id);
+
+      expect(store.todos).toHaveLength(2);
+      expect(store.todos.find((t) => t.id === todo1.id)).toBeDefined();
+      expect(store.todos.find((t) => t.id === todo2.id)).toBeUndefined();
+      expect(store.todos.find((t) => t.id === todo3.id)).toBeDefined();
+    });
+
+    it('should save to localStorage when deleting', () => {
+      const store = useTodosStore();
+
+      const todo1 = store.addTodo('任務 1');
+      const todo2 = store.addTodo('任務 2');
+      localStorage.clear();
+
+      store.deleteTodo(todo1.id);
+
+      const savedData = localStorage.getItem('todos-app-data');
+      expect(savedData).toBeTruthy();
+
+      const parsed = JSON.parse(savedData!);
+      expect(parsed.todos).toHaveLength(1);
+      expect(parsed.todos[0].id).toBe(todo2.id);
+    });
+
+    it('should do nothing when id does not exist', () => {
+      const store = useTodosStore();
+
+      store.addTodo('任務 1');
+      const originalLength = store.todos.length;
+
+      store.deleteTodo('non-existent-id');
+
+      expect(store.todos).toHaveLength(originalLength);
+    });
+
+    it('should delete completed todos', () => {
+      const store = useTodosStore();
+
+      const todo1 = store.addTodo('任務 1');
+      const todo2 = store.addTodo('任務 2');
+
+      store.toggleTodo(todo1.id); // 標記為完成
+
+      expect(store.todos.find((t) => t.id === todo1.id)!.completed).toBe(true);
+
+      store.deleteTodo(todo1.id);
+
+      expect(store.todos).toHaveLength(1);
+      expect(store.todos.find((t) => t.id === todo1.id)).toBeUndefined();
+      expect(store.todos.find((t) => t.id === todo2.id)).toBeDefined();
+    });
+
+    it('should update getters after deletion', () => {
+      const store = useTodosStore();
+
+      const todo1 = store.addTodo('未完成任務');
+      const todo2 = store.addTodo('完成任務');
+      store.toggleTodo(todo2.id);
+
+      expect(store.activeTodos).toHaveLength(1);
+      expect(store.completedTodos).toHaveLength(1);
+
+      store.deleteTodo(todo1.id);
+
+      expect(store.activeTodos).toHaveLength(0);
+      expect(store.completedTodos).toHaveLength(1);
+
+      store.deleteTodo(todo2.id);
+
+      expect(store.activeTodos).toHaveLength(0);
+      expect(store.completedTodos).toHaveLength(0);
+    });
+
+    it('should handle deleting all todos', () => {
+      const store = useTodosStore();
+
+      const todo1 = store.addTodo('任務 1');
+      const todo2 = store.addTodo('任務 2');
+      const todo3 = store.addTodo('任務 3');
+
+      store.deleteTodo(todo1.id);
+      store.deleteTodo(todo2.id);
+      store.deleteTodo(todo3.id);
+
+      expect(store.todos).toHaveLength(0);
+      expect(store.activeTodos).toHaveLength(0);
+      expect(store.completedTodos).toHaveLength(0);
+    });
+  });
+
   describe('integration: addTodo and saveTodos', () => {
     it('should persist todos when addTodo is called with saveTodos', () => {
       const store = useTodosStore();
