@@ -280,6 +280,91 @@ describe('useTodosStore', () => {
     });
   });
 
+  describe('toggleTodo', () => {
+    it('should toggle todo from uncompleted to completed', () => {
+      const store = useTodosStore();
+
+      const todo = store.addTodo('測試任務');
+      expect(todo.completed).toBe(false);
+
+      store.toggleTodo(todo.id);
+
+      const updatedTodo = store.todos.find((t) => t.id === todo.id);
+      expect(updatedTodo).toBeDefined();
+      expect(updatedTodo!.completed).toBe(true);
+    });
+
+    it('should toggle todo from completed to uncompleted', () => {
+      const store = useTodosStore();
+
+      const todo = store.addTodo('測試任務');
+      store.toggleTodo(todo.id); // 切換為完成
+      expect(store.todos.find((t) => t.id === todo.id)!.completed).toBe(true);
+
+      store.toggleTodo(todo.id); // 切換回未完成
+
+      const updatedTodo = store.todos.find((t) => t.id === todo.id);
+      expect(updatedTodo!.completed).toBe(false);
+    });
+
+    it('should update updatedAt timestamp when toggling', () => {
+      const store = useTodosStore();
+      vi.useFakeTimers();
+
+      vi.setSystemTime(new Date('2025-01-01T10:00:00Z'));
+      const todo = store.addTodo('測試任務');
+      const originalUpdatedAt = todo.updatedAt;
+
+      vi.setSystemTime(new Date('2025-01-01T11:00:00Z'));
+      store.toggleTodo(todo.id);
+
+      const updatedTodo = store.todos.find((t) => t.id === todo.id);
+      expect(updatedTodo!.updatedAt).toBeGreaterThan(originalUpdatedAt);
+
+      vi.useRealTimers();
+    });
+
+    it('should save to localStorage when toggling', () => {
+      const store = useTodosStore();
+
+      const todo = store.addTodo('測試任務');
+      localStorage.clear();
+
+      store.toggleTodo(todo.id);
+
+      const savedData = localStorage.getItem('todos-app-data');
+      expect(savedData).toBeTruthy();
+
+      const parsed = JSON.parse(savedData!);
+      expect(parsed.todos[0].completed).toBe(true);
+    });
+
+    it('should do nothing when id does not exist', () => {
+      const store = useTodosStore();
+
+      store.addTodo('測試任務');
+      const originalLength = store.todos.length;
+
+      store.toggleTodo('non-existent-id');
+
+      expect(store.todos).toHaveLength(originalLength);
+    });
+
+    it('should only toggle the specific todo', () => {
+      const store = useTodosStore();
+
+      const todo1 = store.addTodo('任務 1');
+      const todo2 = store.addTodo('任務 2');
+      const todo3 = store.addTodo('任務 3');
+
+      store.toggleTodo(todo2.id);
+
+      expect(store.todos.find((t) => t.id === todo1.id)!.completed).toBe(false);
+      expect(store.todos.find((t) => t.id === todo2.id)!.completed).toBe(true);
+      expect(store.todos.find((t) => t.id === todo3.id)!.completed).toBe(false);
+    });
+  });
+
   describe('integration: addTodo and saveTodos', () => {
     it('should persist todos when addTodo is called with saveTodos', () => {
       const store = useTodosStore();
