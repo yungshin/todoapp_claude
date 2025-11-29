@@ -2,6 +2,7 @@
 import { ref, nextTick } from 'vue';
 import type { TodoItem } from '@/types/todo';
 import { useTodosStore } from '@/stores/todos';
+import { useConfirm } from '@/composables/useConfirm';
 
 // Props
 interface Props {
@@ -10,8 +11,9 @@ interface Props {
 
 const props = defineProps<Props>();
 
-// Store
+// Store & Composables
 const todosStore = useTodosStore();
+const { confirm } = useConfirm();
 
 // 編輯狀態管理
 const isEditing = ref(false);
@@ -99,6 +101,26 @@ function handleInput() {
     editError.value = '';
   }
 }
+
+/**
+ * 處理刪除待辦事項
+ * 顯示確認對話框,確認後才刪除
+ */
+async function handleDelete() {
+  try {
+    // 顯示確認對話框
+    await confirm('確定要刪除此待辦事項嗎?', {
+      title: '刪除確認',
+      confirmText: '刪除',
+      cancelText: '取消',
+    });
+
+    // 使用者確認後,執行刪除
+    todosStore.deleteTodo(props.todo.id);
+  } catch {
+    // 使用者取消,不做任何處理
+  }
+}
 </script>
 
 <template>
@@ -115,16 +137,39 @@ function handleInput() {
       @change="handleToggle"
     />
 
-    <!-- 檢視模式：顯示待辦事項文字 -->
-    <span
-      v-if="!isEditing"
-      data-testid="todo-text"
-      class="flex-1 text-gray-800 break-all cursor-pointer hover:text-blue-600 transition-colors"
-      :class="{ 'line-through text-gray-500 hover:text-gray-600': todo.completed }"
-      @click="enterEditMode"
-    >
-      {{ todo.text }}
-    </span>
+    <!-- 檢視模式：顯示待辦事項文字與刪除按鈕 -->
+    <template v-if="!isEditing">
+      <span
+        data-testid="todo-text"
+        class="flex-1 text-gray-800 break-all cursor-pointer hover:text-blue-600 transition-colors"
+        :class="{ 'line-through text-gray-500 hover:text-gray-600': todo.completed }"
+        @click="enterEditMode"
+      >
+        {{ todo.text }}
+      </span>
+
+      <!-- 刪除按鈕 -->
+      <button
+        data-testid="delete-button"
+        type="button"
+        class="px-3 py-1.5 text-red-600 hover:bg-red-50 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors flex-shrink-0"
+        aria-label="刪除待辦事項"
+        @click="handleDelete"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </button>
+    </template>
 
     <!-- 編輯模式：顯示輸入框與按鈕 -->
     <div v-else class="flex-1 flex flex-col gap-2">
