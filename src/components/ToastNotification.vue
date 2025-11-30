@@ -1,7 +1,7 @@
 <template>
-  <!-- Toast 容器：固定在右上角 -->
+  <!-- Toast 容器：固定在右上角，響應式位置 -->
   <div
-    class="fixed top-4 right-4 z-50 flex flex-col gap-3 pointer-events-none"
+    class="fixed top-4 right-4 left-4 md:left-auto z-50 flex flex-col gap-2 md:gap-3 pointer-events-none"
     role="region"
     aria-live="polite"
     aria-label="通知訊息"
@@ -14,10 +14,10 @@
         :data-testid="`toast-${toast.type}`"
         :class="[
           'pointer-events-auto',
-          'min-w-[300px] max-w-md',
+          'w-full md:min-w-[300px] md:max-w-md',
           'px-4 py-3 rounded-lg shadow-lg',
           'flex items-start gap-3',
-          'text-white',
+          'text-white text-sm md:text-base',
           toastTypeClasses[toast.type],
         ]"
         role="alert"
