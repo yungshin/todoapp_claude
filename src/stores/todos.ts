@@ -4,11 +4,15 @@ import type { TodoItem } from '@/types/todo';
 import type { StorageData } from '@/types/storage';
 import { validateTodoText } from '@/utils/validators';
 import { generateId } from '@/utils/helpers';
+import { useUiStore } from '@/stores/ui';
 
 const STORAGE_KEY = 'todos-app-data';
 const STORAGE_VERSION = '1.0';
 
 export const useTodosStore = defineStore('todos', () => {
+  // 使用 UI store 來顯示 Toast 通知
+  const uiStore = useUiStore();
+
   // State
   const todos = ref<TodoItem[]>([]);
   const isLoading = ref(false);
@@ -70,6 +74,9 @@ export const useTodosStore = defineStore('todos', () => {
     // 自動儲存到 localStorage
     saveTodos();
 
+    // 顯示成功訊息
+    uiStore.addToast('success', '待辦事項新增成功');
+
     return todo;
   }
 
@@ -80,11 +87,16 @@ export const useTodosStore = defineStore('todos', () => {
   function toggleTodo(id: string): void {
     const todo = todos.value.find((t) => t.id === id);
     if (todo) {
+      const wasCompleted = todo.completed;
       todo.completed = !todo.completed;
       todo.updatedAt = Date.now();
 
       // 自動儲存到 localStorage
       saveTodos();
+
+      // 顯示成功訊息
+      const message = wasCompleted ? '已標記為未完成' : '已標記為已完成';
+      uiStore.addToast('success', message);
     }
   }
 
@@ -111,6 +123,9 @@ export const useTodosStore = defineStore('todos', () => {
 
     // 自動儲存到 localStorage
     saveTodos();
+
+    // 顯示成功訊息
+    uiStore.addToast('success', '待辦事項更新成功');
   }
 
   /**
@@ -124,6 +139,9 @@ export const useTodosStore = defineStore('todos', () => {
 
       // 自動儲存到 localStorage
       saveTodos();
+
+      // 顯示成功訊息
+      uiStore.addToast('success', '待辦事項刪除成功');
     }
   }
 
