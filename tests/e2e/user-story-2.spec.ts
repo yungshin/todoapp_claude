@@ -252,7 +252,7 @@ describe('User Story 2 - 標示完成狀態', () => {
       store1.toggleTodo(todo.id);
 
       // 驗證已儲存到 localStorage
-      const savedData = localStorage.getItem('todos-app-data');
+      const savedData = localStorage.getItem('todo-app-data');
       expect(savedData).toBeTruthy();
       const parsed = JSON.parse(savedData!);
       expect(parsed.todos[0].completed).toBe(true);

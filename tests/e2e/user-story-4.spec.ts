@@ -186,7 +186,7 @@ describe('User Story 4 - 刪除待辦事項', () => {
       await wrapper.vm.$nextTick();
 
       // 驗證 localStorage
-      const savedData = localStorage.getItem('todos-app-data');
+      const savedData = localStorage.getItem('todo-app-data');
       expect(savedData).toBeTruthy();
 
       const parsed = JSON.parse(savedData!);
