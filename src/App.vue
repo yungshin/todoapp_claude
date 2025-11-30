@@ -33,7 +33,7 @@ function dismissBanner(): void {
 </script>
 
 <template>
-  <main class="min-h-screen bg-gray-50">
+  <main class="min-h-screen bg-gray-50 container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
     <!-- localStorage 失敗警告橫幅 -->
     <Transition name="slide-down">
       <div
@@ -42,7 +42,7 @@ function dismissBanner(): void {
         role="alert"
         aria-live="assertive"
       >
-        <div class="container mx-auto flex items-center justify-between gap-4">
+        <div class="max-w-4xl mx-auto flex items-center justify-between gap-4">
           <div class="flex items-center gap-2">
             <span class="text-xl" aria-hidden="true">⚠️</span>
             <p class="font-medium">
@@ -72,16 +72,14 @@ function dismissBanner(): void {
     </Transition>
 
     <!-- 響應式容器: 手機 px-4, 平板 px-6, 桌面 px-8, 最大寬度 1024px -->
-    <div class="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
-      <header class="py-6 md:py-8 lg:py-10 text-center">
-        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-2">
-          待辦事項
-        </h1>
-        <p class="text-sm md:text-base text-gray-600">輕鬆管理您的每日任務</p>
-      </header>
+    <header class="py-6 md:py-8 lg:py-10 text-center">
+      <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-2">
+        待辦事項
+      </h1>
+      <p class="text-sm md:text-base text-gray-600">輕鬆管理您的每日任務</p>
+    </header>
 
-      <TodoList />
-    </div>
+    <TodoList />
 
     <!-- 使用 Teleport 將 ConfirmDialog 渲染到 body,確保對話框在最上層 -->
     <Teleport to="body">

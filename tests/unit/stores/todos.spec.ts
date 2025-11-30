@@ -250,7 +250,7 @@ describe('useTodosStore', () => {
 
       store.saveTodos();
 
-      const savedData = localStorage.getItem('todos-app-data');
+      const savedData = localStorage.getItem('todo-app-data');
       expect(savedData).toBeTruthy();
 
       const parsed = JSON.parse(savedData!);
@@ -265,7 +265,7 @@ describe('useTodosStore', () => {
 
       store.saveTodos();
 
-      const savedData = localStorage.getItem('todos-app-data');
+      const savedData = localStorage.getItem('todo-app-data');
       const parsed = JSON.parse(savedData!);
 
       expect(parsed.todos).toHaveLength(0);
@@ -318,7 +318,7 @@ describe('useTodosStore', () => {
         ],
       };
 
-      localStorage.setItem('todos-app-data', JSON.stringify(mockData));
+      localStorage.setItem('todo-app-data', JSON.stringify(mockData));
 
       store.loadTodos();
 
@@ -341,7 +341,7 @@ describe('useTodosStore', () => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       // 設定無效的 JSON
-      localStorage.setItem('todos-app-data', 'invalid json {]');
+      localStorage.setItem('todo-app-data', 'invalid json {]');
 
       store.loadTodos();
 
@@ -423,7 +423,7 @@ describe('useTodosStore', () => {
 
       store.toggleTodo(todo.id);
 
-      const savedData = localStorage.getItem('todos-app-data');
+      const savedData = localStorage.getItem('todo-app-data');
       expect(savedData).toBeTruthy();
 
       const parsed = JSON.parse(savedData!);
@@ -551,7 +551,7 @@ describe('useTodosStore', () => {
 
       store.updateTodo(todo.id, '更新後的文字');
 
-      const savedData = localStorage.getItem('todos-app-data');
+      const savedData = localStorage.getItem('todo-app-data');
       expect(savedData).toBeTruthy();
 
       const parsed = JSON.parse(savedData!);
@@ -623,7 +623,7 @@ describe('useTodosStore', () => {
 
       store.deleteTodo(todo1.id);
 
-      const savedData = localStorage.getItem('todos-app-data');
+      const savedData = localStorage.getItem('todo-app-data');
       expect(savedData).toBeTruthy();
 
       const parsed = JSON.parse(savedData!);

@@ -392,7 +392,7 @@ describe('User Story 1 - 新增與檢視待辦事項', () => {
       await wrapper.vm.$nextTick();
 
       // 驗證 localStorage 中有資料
-      const savedData = localStorage.getItem('todos-app-data');
+      const savedData = localStorage.getItem('todo-app-data');
       expect(savedData).toBeTruthy();
 
       const parsed = JSON.parse(savedData!);
@@ -416,7 +416,7 @@ describe('User Story 1 - 新增與檢視待辦事項', () => {
         lastSyncedAt: null,
       };
 
-      localStorage.setItem('todos-app-data', JSON.stringify(mockData));
+      localStorage.setItem('todo-app-data', JSON.stringify(mockData));
 
       // 掛載 App
       const wrapper = mount(App, {
@@ -494,7 +494,7 @@ describe('User Story 1 - 新增與檢視待辦事項', () => {
 
       setItemSpy.mockImplementation((key, value) => {
         // 只對我們的 key 拋出錯誤
-        if (key === 'todos-app-data') {
+        if (key === 'todo-app-data') {
           const error = new DOMException('QuotaExceededError');
           error.name = 'QuotaExceededError';
           throw error;
@@ -541,7 +541,7 @@ describe('User Story 1 - 新增與檢視待辦事項', () => {
       // 模擬 localStorage.getItem 拋出錯誤
       const getItemSpy = vi.spyOn(Storage.prototype, 'getItem');
       getItemSpy.mockImplementation((key) => {
-        if (key === 'todos-app-data') {
+        if (key === 'todo-app-data') {
           throw new Error('localStorage read error');
         }
         return null;
@@ -571,7 +571,7 @@ describe('User Story 1 - 新增與檢視待辦事項', () => {
       const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       // 設定無效的 JSON 資料
-      localStorage.setItem('todos-app-data', 'invalid json {]');
+      localStorage.setItem('todo-app-data', 'invalid json {]');
 
       const wrapper = mount(App, {
         global: {
@@ -727,7 +727,7 @@ describe('User Story 1 - 新增與檢視待辦事項', () => {
       expect((addButton.element as HTMLButtonElement).disabled).toBe(true);
 
       // Scenario 4: 驗證資料持久化
-      const savedData = localStorage.getItem('todos-app-data');
+      const savedData = localStorage.getItem('todo-app-data');
       expect(savedData).toBeTruthy();
 
       const parsed = JSON.parse(savedData!);

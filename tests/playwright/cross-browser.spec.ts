@@ -363,10 +363,21 @@ test.describe('跨瀏覽器相容性 - 鍵盤操作', () => {
     await editInput.fill('已用 Enter 儲存');
     await editInput.press('Enter');
 
-    await expect(todoItem).toContainText('已用 Enter 儲存');
+    // 等待編輯模式結束並重新選擇元素
+    await expect(editInput).not.toBeVisible({ timeout: 5000 });
+    const updatedTodoItem = page.locator('[data-testid="todo-item"]').filter({ hasText: '已用 Enter 儲存' });
+    await expect(updatedTodoItem).toBeVisible();
   });
 
-  test('鍵盤操作：Tab 鍵導航', async ({ page }) => {
+  test('鍵盤操作：Tab 鍵導航', async ({ page, browserName }) => {
+    // WebKit (Safari) 預設不支援 Tab 鍵聚焦到按鈕元素
+    // 這是瀏覽器層級的行為差異，需要使用者在 Safari 設定中手動啟用
+    // 參考：https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/tabindex
+    test.skip(
+      browserName === 'webkit',
+      'WebKit 瀏覽器預設不支援 Tab 鍵聚焦到按鈕，這是已知的瀏覽器行為差異'
+    );
+
     await page.goto('/');
 
     // 使用 Tab 鍵導航到輸入框
@@ -376,10 +387,20 @@ test.describe('跨瀏覽器相容性 - 鍵盤操作', () => {
     const input = page.locator('input[placeholder*="待辦事項"]');
     await expect(input).toBeFocused();
 
+    // 輸入一些文字以啟用按鈕
+    await input.fill('Tab測試');
+
+    // 等待按鈕啟用
+    const addButton = page.locator('button:has-text("新增")');
+    await expect(addButton).toBeEnabled({ timeout: 2000 });
+
+    // 確保焦點仍在輸入框
+    await input.focus();
+    await expect(input).toBeFocused();
+
     // 再按 Tab 移動到新增按鈕
     await page.keyboard.press('Tab');
 
-    const addButton = page.locator('button:has-text("新增")');
     await expect(addButton).toBeFocused();
   });
 });

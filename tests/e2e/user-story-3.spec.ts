@@ -394,7 +394,7 @@ describe('User Story 3 - 編輯待辦事項', () => {
       await wrapper.vm.$nextTick();
 
       // 驗證 localStorage 中的資料
-      const savedData = localStorage.getItem('todos-app-data');
+      const savedData = localStorage.getItem('todo-app-data');
       expect(savedData).toBeTruthy();
 
       const parsed = JSON.parse(savedData!);
