@@ -261,29 +261,34 @@ test.describe('跨尺寸功能一致性', () => {
       await expect(checkbox).toBeChecked();
 
       // 3. 編輯待辦事項（點擊文字進入編輯模式）
-      const todoText = todoItem.locator('span').filter({ hasText: `${viewport.name}測試項目` });
+      // 重新獲取 todoItem 引用，因為完成狀態改變後 DOM 可能已更新
+      const updatedTodoItem = page.locator('[data-testid="todo-item"]').filter({ hasText: `${viewport.name}測試項目` });
+      const todoText = updatedTodoItem.locator('[data-testid="todo-text"]');
       await todoText.click();
 
-      const editInput = todoItem.locator('input[type="text"]');
+      // 等待編輯輸入框出現（直接從頁面尋找，因為進入編輯模式後 filter 可能失效）
+      const editInput = page.locator('[data-testid="edit-input"]');
       await expect(editInput).toBeVisible();
       await editInput.fill(`${viewport.name}已編輯`);
       await editInput.press('Enter');
 
-      await expect(todoItem).toContainText(`${viewport.name}已編輯`);
+      // 再次重新獲取引用以驗證更新後的文字
+      const finalTodoItem = page.locator('[data-testid="todo-item"]').filter({ hasText: `${viewport.name}已編輯` });
+      await expect(finalTodoItem).toBeVisible();
 
       // 4. 刪除待辦事項
-      const deleteButton = todoItem.locator('button[aria-label*="刪除"]');
+      const deleteButton = finalTodoItem.locator('button[aria-label*="刪除"]');
       await deleteButton.click();
 
       // 確認對話框應該出現
       const confirmDialog = page.locator('[role="dialog"]');
       await expect(confirmDialog).toBeVisible();
 
-      // 點擊確認按鈕
-      await page.click('button:has-text("確認")');
+      // 點擊確認按鈕（按鈕文字是「刪除」）
+      await page.click('button:has-text("刪除")');
 
       // 待辦事項應該被刪除
-      await expect(todoItem).not.toBeVisible();
+      await expect(finalTodoItem).not.toBeVisible();
     });
   }
 });
