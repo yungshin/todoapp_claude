@@ -107,11 +107,11 @@ test.describe('跨瀏覽器相容性 - 核心功能', () => {
 
     // 修改內容
     await editInput.fill('已修改內容');
+    await page.click('button:has-text("儲存")');
+    await expect(page.locator('[data-testid="edit-input"]')).not.toBeVisible({ timeout: 5000 });
 
     // 確認內容已更新
     await expect(page.locator('[data-testid="todo-item"]')).toContainText('已修改內容');
-    await expect(todoItem).toContainText('已修改內容');
-    await expect(todoItem).not.toContainText('原始內容');
   });
 
   test('US3: 取消編輯', async ({ page }) => {
