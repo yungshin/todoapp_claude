@@ -3,6 +3,7 @@ import { onMounted } from 'vue';
 import { useTodosStore } from '@/stores/todos';
 import TodoList from '@/components/TodoList.vue';
 import ConfirmDialog from '@/components/ConfirmDialog.vue';
+import ToastNotification from '@/components/ToastNotification.vue';
 
 // 使用 Pinia store
 const todosStore = useTodosStore();
@@ -27,6 +28,11 @@ onMounted(() => {
     <!-- 使用 Teleport 將 ConfirmDialog 渲染到 body,確保對話框在最上層 -->
     <Teleport to="body">
       <ConfirmDialog />
+    </Teleport>
+
+    <!-- 使用 Teleport 將 ToastNotification 渲染到 body,確保通知在最上層 -->
+    <Teleport to="body">
+      <ToastNotification />
     </Teleport>
   </main>
 </template>
