@@ -380,12 +380,19 @@ test.describe('跨瀏覽器相容性 - 鍵盤操作', () => {
     await expect(input).toBeFocused();
 
     // 輸入一些文字以啟用按鈕
-    await page.keyboard.type('Tab測試');
+    await input.fill('Tab測試');
+
+    // 等待按鈕啟用
+    const addButton = page.locator('button:has-text("新增")');
+    await expect(addButton).toBeEnabled({ timeout: 2000 });
+
+    // 確保焦點仍在輸入框
+    await input.focus();
+    await expect(input).toBeFocused();
 
     // 再按 Tab 移動到新增按鈕
     await page.keyboard.press('Tab');
 
-    const addButton = page.locator('button:has-text("新增")');
     await expect(addButton).toBeFocused();
   });
 });
