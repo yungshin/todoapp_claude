@@ -71,10 +71,13 @@ function dismissBanner(): void {
       </div>
     </Transition>
 
-    <div class="container mx-auto">
-      <header class="py-8 text-center">
-        <h1 class="text-4xl font-bold text-gray-800 mb-2">待辦事項</h1>
-        <p class="text-gray-600">輕鬆管理您的每日任務</p>
+    <!-- 響應式容器: 手機 px-4, 平板 px-6, 桌面 px-8, 最大寬度 1024px -->
+    <div class="container mx-auto px-4 md:px-6 lg:px-8 max-w-4xl">
+      <header class="py-6 md:py-8 lg:py-10 text-center">
+        <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-800 mb-2">
+          待辦事項
+        </h1>
+        <p class="text-sm md:text-base text-gray-600">輕鬆管理您的每日任務</p>
       </header>
 
       <TodoList />
