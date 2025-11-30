@@ -14,12 +14,13 @@ const completedTodos = computed(() => todosStore.completedTodos);
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto p-6 space-y-6">
+  <!-- 響應式容器: 手機 p-4, 平板 p-5, 桌面 p-6 -->
+  <div class="max-w-4xl mx-auto p-4 md:p-5 lg:p-6 space-y-4 md:space-y-5 lg:space-y-6">
     <TodoInput />
 
     <!-- 進行中組別 -->
-    <section v-if="activeTodos.length > 0" class="space-y-3">
-      <h2 class="text-lg font-semibold text-gray-700 pb-2 border-b border-gray-200">
+    <section v-if="activeTodos.length > 0" class="space-y-2 md:space-y-3">
+      <h2 class="text-base md:text-lg font-semibold text-gray-700 pb-2 border-b border-gray-200">
         進行中
       </h2>
       <div class="space-y-2">
@@ -32,8 +33,8 @@ const completedTodos = computed(() => todosStore.completedTodos);
     </section>
 
     <!-- 已完成組別 -->
-    <section v-if="completedTodos.length > 0" class="space-y-3">
-      <h2 class="text-lg font-semibold text-gray-500 pb-2 border-b border-gray-200">
+    <section v-if="completedTodos.length > 0" class="space-y-2 md:space-y-3">
+      <h2 class="text-base md:text-lg font-semibold text-gray-500 pb-2 border-b border-gray-200">
         已完成
       </h2>
       <div class="space-y-2">

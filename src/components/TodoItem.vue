@@ -124,15 +124,16 @@ async function handleDelete() {
 </script>
 
 <template>
+  <!-- 響應式間距: 手機 p-3, 平板/桌面 p-4 -->
   <div
-    class="flex items-center gap-3 p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-200"
+    class="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-200"
     :class="{ 'opacity-60': todo.completed }"
   >
-    <!-- 核取方塊 -->
+    <!-- 核取方塊 - 響應式尺寸 -->
     <input
       type="checkbox"
       :checked="todo.completed"
-      class="w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer flex-shrink-0"
+      class="w-5 h-5 md:w-5 md:h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 cursor-pointer flex-shrink-0"
       :aria-label="todo.completed ? '標記為未完成' : '標記為已完成'"
       @change="handleToggle"
     />
@@ -141,18 +142,18 @@ async function handleDelete() {
     <template v-if="!isEditing">
       <span
         data-testid="todo-text"
-        class="flex-1 text-gray-800 break-all cursor-pointer hover:text-blue-600 transition-colors"
+        class="flex-1 text-sm md:text-base text-gray-800 break-all cursor-pointer hover:text-blue-600 transition-colors"
         :class="{ 'line-through text-gray-500 hover:text-gray-600': todo.completed }"
         @click="enterEditMode"
       >
         {{ todo.text }}
       </span>
 
-      <!-- 刪除按鈕 -->
+      <!-- 刪除按鈕 - 響應式尺寸 -->
       <button
         data-testid="delete-button"
         type="button"
-        class="px-3 py-1.5 text-red-600 hover:bg-red-50 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors flex-shrink-0"
+        class="p-2 md:px-3 md:py-1.5 text-red-600 hover:bg-red-50 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors flex-shrink-0"
         aria-label="刪除待辦事項"
         @click="handleDelete"
       >
@@ -173,36 +174,39 @@ async function handleDelete() {
 
     <!-- 編輯模式：顯示輸入框與按鈕 -->
     <div v-else class="flex-1 flex flex-col gap-2">
-      <div class="flex gap-2">
+      <!-- 響應式按鈕佈局: 手機堆疊, 平板/桌面橫向 -->
+      <div class="flex flex-col sm:flex-row gap-2">
         <input
           ref="editInputRef"
           v-model="editText"
           data-testid="edit-input"
           type="text"
           maxlength="500"
-          class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          class="flex-1 px-3 py-2 text-sm md:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           :class="{ 'border-red-500 focus:ring-red-500': editError }"
           @keydown="handleKeydown"
           @input="handleInput"
         />
 
-        <button
-          data-testid="save-button"
-          type="button"
-          class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
-          @click="saveEdit"
-        >
-          儲存
-        </button>
+        <div class="flex gap-2">
+          <button
+            data-testid="save-button"
+            type="button"
+            class="flex-1 sm:flex-none px-4 py-2 text-sm md:text-base bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+            @click="saveEdit"
+          >
+            儲存
+          </button>
 
-        <button
-          data-testid="cancel-button"
-          type="button"
-          class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors"
-          @click="cancelEdit"
-        >
-          取消
-        </button>
+          <button
+            data-testid="cancel-button"
+            type="button"
+            class="flex-1 sm:flex-none px-4 py-2 text-sm md:text-base bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-colors"
+            @click="cancelEdit"
+          >
+            取消
+          </button>
+        </div>
       </div>
 
       <!-- 錯誤訊息 -->
