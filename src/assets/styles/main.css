@@ -1,0 +1,7 @@
+/**
+ * Tailwind CSS 入口檔案
+ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
