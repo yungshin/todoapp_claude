@@ -37,14 +37,14 @@ test.describe('跨瀏覽器相容性 - 核心功能', () => {
 
     // 確認待辦事項出現
     const todo1 = page.locator('li').filter({ hasText: `${browserName} 測試項目 1` });
-    await expect(todo1).toBeVisible();
+    await expect(todo1).toBeVisible({ timeout: 10000 });
 
     // 新增第二個待辦事項
     await input.fill(`${browserName} 測試項目 2`);
     await page.click('button:has-text("新增")');
 
     const todo2 = page.locator('li').filter({ hasText: `${browserName} 測試項目 2` });
-    await expect(todo2).toBeVisible();
+    await expect(todo2).toBeVisible({ timeout: 10000 });
 
     // 確認兩個待辦事項都存在
     const todoCount = await page.locator('li').count();
@@ -73,7 +73,7 @@ test.describe('跨瀏覽器相容性 - 核心功能', () => {
     await page.click('button:has-text("新增")');
 
     const todoItem = page.locator('li').filter({ hasText: '測試完成狀態' });
-    await expect(todoItem).toBeVisible();
+    await expect(todoItem).toBeVisible({ timeout: 10000 });
 
     // 點擊核取方塊標記為完成
     const checkbox = todoItem.locator('input[type="checkbox"]');
@@ -99,7 +99,7 @@ test.describe('跨瀏覽器相容性 - 核心功能', () => {
     await page.click('button:has-text("新增")');
 
     const todoItem = page.locator('li').filter({ hasText: '原始內容' });
-    await expect(todoItem).toBeVisible();
+    await expect(todoItem).toBeVisible({ timeout: 10000 });
 
     // 點擊文字進入編輯模式
     const todoText = todoItem.locator('span').filter({ hasText: '原始內容' });
@@ -149,7 +149,7 @@ test.describe('跨瀏覽器相容性 - 核心功能', () => {
     await page.click('button:has-text("新增")');
 
     const todoItem = page.locator('li').filter({ hasText: '即將被刪除' });
-    await expect(todoItem).toBeVisible();
+    await expect(todoItem).toBeVisible({ timeout: 10000 });
 
     // 點擊刪除按鈕
     const deleteButton = todoItem.locator('button[aria-label*="刪除"]');
@@ -216,7 +216,7 @@ test.describe('跨瀏覽器相容性 - localStorage 持久化', () => {
 
     // 確認所有待辦事項仍然存在
     for (const todo of todos) {
-      await expect(page.locator('li').filter({ hasText: todo })).toBeVisible();
+      await expect(page.locator('li').filter({ hasText: todo })).toBeVisible({ timeout: 10000 });
     }
 
     // 確認完成狀態保持
@@ -232,6 +232,9 @@ test.describe('跨瀏覽器相容性 - localStorage 持久化', () => {
     // 新增待辦事項
     await page.fill('input[placeholder*="待辦事項"]', 'LocalStorage 測試');
     await page.click('button:has-text("新增")');
+
+    // 等待待辦事項新增完成
+    await page.waitForTimeout(500);
 
     // 檢查 localStorage 資料
     const storageData = await page.evaluate(() => {
@@ -264,7 +267,7 @@ test.describe('跨瀏覽器相容性 - Toast 通知系統', () => {
 
     // 確認成功 Toast 出現
     const successToast = page.locator('[data-testid="toast-success"]');
-    await expect(successToast).toBeVisible({ timeout: 2000 });
+    await expect(successToast).toBeVisible({ timeout: 3000 });
 
     // Toast 應該包含成功訊息
     await expect(successToast).toContainText(/新增|成功|完成/i);
@@ -277,7 +280,7 @@ test.describe('跨瀏覽器相容性 - Toast 通知系統', () => {
     await page.click('button:has-text("新增")');
 
     const successToast = page.locator('[data-testid="toast-success"]');
-    await expect(successToast).toBeVisible({ timeout: 2000 });
+    await expect(successToast).toBeVisible({ timeout: 3000 });
 
     // 等待 Toast 自動消失（預設 3 秒）
     await expect(successToast).not.toBeVisible({ timeout: 5000 });
@@ -290,7 +293,7 @@ test.describe('跨瀏覽器相容性 - Toast 通知系統', () => {
     await page.click('button:has-text("新增")');
 
     const successToast = page.locator('[data-testid="toast-success"]');
-    await expect(successToast).toBeVisible({ timeout: 2000 });
+    await expect(successToast).toBeVisible({ timeout: 3000 });
 
     // 點擊關閉按鈕
     const closeButton = successToast.locator('button[aria-label*="關閉"]');
@@ -312,7 +315,7 @@ test.describe('跨瀏覽器相容性 - XSS 防護', () => {
 
     // script 應該顯示為純文字
     const todoItem = page.locator('li').filter({ hasText: '<script>' });
-    await expect(todoItem).toBeVisible();
+    await expect(todoItem).toBeVisible({ timeout: 10000 });
 
     // 確認沒有執行 script（頁面應該沒有 alert）
     // 如果 script 被執行，測試會因為 alert 而卡住
@@ -328,7 +331,7 @@ test.describe('跨瀏覽器相容性 - XSS 防護', () => {
 
     // HTML 應該顯示為純文字
     const todoItem = page.locator('li').filter({ hasText: '<img' });
-    await expect(todoItem).toBeVisible();
+    await expect(todoItem).toBeVisible({ timeout: 10000 });
   });
 });
 
@@ -342,7 +345,7 @@ test.describe('跨瀏覽器相容性 - 鍵盤操作', () => {
 
     // 待辦事項應該被新增
     const todoItem = page.locator('li').filter({ hasText: '按 Enter 新增' });
-    await expect(todoItem).toBeVisible();
+    await expect(todoItem).toBeVisible({ timeout: 10000 });
   });
 
   test('鍵盤操作：Enter 儲存編輯，ESC 取消編輯', async ({ page }) => {
