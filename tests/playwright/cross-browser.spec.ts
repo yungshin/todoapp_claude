@@ -104,7 +104,7 @@ test.describe('跨瀏覽器相容性 - 核心功能', () => {
     await todoText.click();
 
     // 等待編輯輸入框出現（給更長的等待時間）
-    const editInput = todoItem.locator('input[type="text"]');
+    const editInput = todoItem.locator('[data-testid="edit-input"]');
     await expect(editInput).toBeVisible({ timeout: 10000 });
 
     // 修改內容
@@ -128,7 +128,7 @@ test.describe('跨瀏覽器相容性 - 核心功能', () => {
     await todoText.click();
 
     // 進入編輯模式（給更長等待時間）
-    const editInput = todoItem.locator('input[type="text"]');
+    const editInput = todoItem.locator('[data-testid="edit-input"]');
     await expect(editInput).toBeVisible({ timeout: 10000 });
 
     // 修改但按 ESC 取消
@@ -360,7 +360,7 @@ test.describe('跨瀏覽器相容性 - 鍵盤操作', () => {
     await todoText.click();
 
     // 編輯並按 Enter 儲存
-    const editInput = todoItem.locator('input[type="text"]');
+    const editInput = todoItem.locator('[data-testid="edit-input"]');
     await expect(editInput).toBeVisible({ timeout: 10000 });
     await editInput.fill('已用 Enter 儲存');
     await editInput.press('Enter');
