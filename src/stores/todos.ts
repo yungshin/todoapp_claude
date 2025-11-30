@@ -17,6 +17,7 @@ export const useTodosStore = defineStore('todos', () => {
   const todos = ref<TodoItem[]>([]);
   const isLoading = ref(false);
   const error = ref<string | null>(null);
+  const storageError = ref(false); // localStorage 儲存失敗標記
 
   // Getters
   /**
@@ -178,8 +179,13 @@ export const useTodosStore = defineStore('todos', () => {
       };
 
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+      // 儲存成功,清除錯誤標記
+      storageError.value = false;
     } catch (err) {
       console.error('localStorage write error:', err);
+
+      // 設定錯誤標記
+      storageError.value = true;
 
       // 根據不同錯誤類型處理
       if (err instanceof DOMException && err.name === 'QuotaExceededError') {
@@ -197,6 +203,7 @@ export const useTodosStore = defineStore('todos', () => {
     todos,
     isLoading,
     error,
+    storageError,
 
     // Getters
     activeTodos,
