@@ -126,6 +126,7 @@ async function handleDelete() {
 <template>
   <!-- 響應式間距: 手機 p-3, 平板/桌面 p-4 -->
   <div
+    data-testid="todo-item"
     class="flex items-center gap-2 md:gap-3 p-3 md:p-4 bg-white rounded-lg border border-gray-200 hover:shadow-md transition-shadow duration-200"
     :class="{ 'opacity-60': todo.completed }"
   >

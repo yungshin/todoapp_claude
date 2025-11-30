@@ -69,7 +69,7 @@ test.describe('手機裝置響應式設計 (< 768px)', () => {
     await page.click('button:has-text("新增")');
 
     // 等待待辦事項出現（Toast 可能會干擾，給更長的等待時間）
-    const todoItem = page.locator('li').filter({ hasText: '測試手機響應式設計' });
+    const todoItem = page.locator('[data-testid="todo-item"]').filter({ hasText: '測試手機響應式設計' });
     await expect(todoItem).toBeVisible({ timeout: 10000 });
 
     // 檢查待辦事項可見且可點擊
@@ -134,7 +134,7 @@ test.describe('平板裝置響應式設計 (768px - 1024px)', () => {
     await page.fill('input[placeholder*="待辦事項"]', '測試平板響應式設計');
     await page.click('button:has-text("新增")');
 
-    const todoItem = page.locator('li').filter({ hasText: '測試平板響應式設計' });
+    const todoItem = page.locator('[data-testid="todo-item"]').filter({ hasText: '測試平板響應式設計' });
     await expect(todoItem).toBeVisible({ timeout: 10000 });
   });
 });
@@ -188,7 +188,7 @@ test.describe('桌面裝置響應式設計 (> 1024px)', () => {
     await page.fill('input[placeholder*="待辦事項"]', '測試桌面響應式設計');
     await page.click('button:has-text("新增")');
 
-    const todoItem = page.locator('li').filter({ hasText: '測試桌面響應式設計' });
+    const todoItem = page.locator('[data-testid="todo-item"]').filter({ hasText: '測試桌面響應式設計' });
     await expect(todoItem).toBeVisible({ timeout: 10000 });
 
     // 桌面上應該有良好的可讀性
@@ -252,7 +252,7 @@ test.describe('跨尺寸功能一致性', () => {
       await page.fill('input[placeholder*="待辦事項"]', `${viewport.name}測試項目`);
       await page.click('button:has-text("新增")');
 
-      const todoItem = page.locator('li').filter({ hasText: `${viewport.name}測試項目` });
+      const todoItem = page.locator('[data-testid="todo-item"]').filter({ hasText: `${viewport.name}測試項目` });
       await expect(todoItem).toBeVisible();
 
       // 2. 切換完成狀態
