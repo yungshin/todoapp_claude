@@ -1,20 +1,21 @@
 <template>
   <div class="space-y-2">
-    <div class="flex gap-2">
+    <!-- 響應式佈局: 手機垂直排列, 平板/桌面水平排列 -->
+    <div class="flex flex-col md:flex-row gap-2">
       <input
         ref="inputRef"
         v-model="inputText"
         type="text"
         maxlength="500"
         placeholder="輸入待辦事項..."
-        class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        class="flex-1 px-4 py-2.5 md:py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-base md:text-sm"
         aria-label="新增待辦事項輸入框"
         @input="updateCharacterCount"
         @keydown.enter="handleSubmit"
       />
       <button
         :disabled="!inputText.trim() || isSubmitting"
-        class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        class="w-full md:w-auto px-6 py-2.5 md:py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-base md:text-sm font-medium"
         @click="handleSubmit"
       >
         新增
