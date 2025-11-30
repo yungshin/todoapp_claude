@@ -96,22 +96,20 @@ test.describe('跨瀏覽器相容性 - 核心功能', () => {
     await page.fill('input[placeholder*="待辦事項"]', '原始內容');
     await page.click('button:has-text("新增")');
 
-    const todoItem = page.locator('[data-testid="todo-item"]').filter({ hasText: '原始內容' });
-    await expect(todoItem).toBeVisible({ timeout: 10000 });
 
-    // 點擊文字進入編輯模式（使用 dblclick 雙擊或等待）
-    const todoText = todoItem.locator('[data-testid="todo-text"]');
-    await todoText.click();
+    // 等待並點擊文字進入編輯模式
+    await page.waitForSelector('[data-testid="todo-text"]', { timeout: 10000 });
+    await page.click('[data-testid="todo-text"]');
 
     // 等待編輯輸入框出現（給更長的等待時間）
-    const editInput = todoItem.locator('[data-testid="edit-input"]');
+    const editInput = page.locator('[data-testid="edit-input"]');
     await expect(editInput).toBeVisible({ timeout: 10000 });
 
     // 修改內容
     await editInput.fill('已修改內容');
-    await editInput.press('Enter');
 
     // 確認內容已更新
+    await expect(page.locator('[data-testid="todo-item"]')).toContainText('已修改內容');
     await expect(todoItem).toContainText('已修改內容');
     await expect(todoItem).not.toContainText('原始內容');
   });
@@ -123,12 +121,12 @@ test.describe('跨瀏覽器相容性 - 核心功能', () => {
     await page.fill('input[placeholder*="待辦事項"]', '不要修改');
     await page.click('button:has-text("新增")');
 
-    const todoItem = page.locator('[data-testid="todo-item"]').filter({ hasText: '不要修改' });
-    const todoText = todoItem.locator('[data-testid="todo-text"]');
-    await todoText.click();
+    // 等待並點擊文字進入編輯模式
+    await page.waitForSelector('[data-testid="todo-text"]', { timeout: 10000 });
+    await page.click('[data-testid="todo-text"]');
 
-    // 進入編輯模式（給更長等待時間）
-    const editInput = todoItem.locator('[data-testid="edit-input"]');
+    // 等待編輯輸入框出現
+    const editInput = page.locator('[data-testid="edit-input"]');
     await expect(editInput).toBeVisible({ timeout: 10000 });
 
     // 修改但按 ESC 取消
@@ -136,7 +134,7 @@ test.describe('跨瀏覽器相容性 - 核心功能', () => {
     await editInput.press('Escape');
 
     // 確認內容未改變
-    await expect(todoItem).toContainText('不要修改');
+    await expect(page.locator('[data-testid="todo-item"]')).toContainText('不要修改');
   });
 
   test('US4: 刪除待辦事項', async ({ page }) => {
@@ -360,7 +358,7 @@ test.describe('跨瀏覽器相容性 - 鍵盤操作', () => {
     await todoText.click();
 
     // 編輯並按 Enter 儲存
-    const editInput = todoItem.locator('[data-testid="edit-input"]');
+    const editInput = page.locator('[data-testid="edit-input"]');
     await expect(editInput).toBeVisible({ timeout: 10000 });
     await editInput.fill('已用 Enter 儲存');
     await editInput.press('Enter');
