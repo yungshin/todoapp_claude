@@ -6,7 +6,7 @@ import { validateTodoText } from '@/utils/validators';
 import { generateId } from '@/utils/helpers';
 import { useUiStore } from '@/stores/ui';
 
-const STORAGE_KEY = 'todos-app-data';
+const STORAGE_KEY = 'todo-app-data';
 const STORAGE_VERSION = '1.0';
 
 export const useTodosStore = defineStore('todos', () => {

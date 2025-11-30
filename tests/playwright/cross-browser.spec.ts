@@ -363,7 +363,10 @@ test.describe('跨瀏覽器相容性 - 鍵盤操作', () => {
     await editInput.fill('已用 Enter 儲存');
     await editInput.press('Enter');
 
-    await expect(todoItem).toContainText('已用 Enter 儲存');
+    // 等待編輯模式結束並重新選擇元素
+    await expect(editInput).not.toBeVisible({ timeout: 5000 });
+    const updatedTodoItem = page.locator('[data-testid="todo-item"]').filter({ hasText: '已用 Enter 儲存' });
+    await expect(updatedTodoItem).toBeVisible();
   });
 
   test('鍵盤操作：Tab 鍵導航', async ({ page }) => {
@@ -375,6 +378,9 @@ test.describe('跨瀏覽器相容性 - 鍵盤操作', () => {
     // 輸入應該獲得焦點
     const input = page.locator('input[placeholder*="待辦事項"]');
     await expect(input).toBeFocused();
+
+    // 輸入一些文字以啟用按鈕
+    await page.keyboard.type('Tab測試');
 
     // 再按 Tab 移動到新增按鈕
     await page.keyboard.press('Tab');
